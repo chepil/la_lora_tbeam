@@ -72,8 +72,8 @@ bool init_ok = false;
 
 void sendlog()
 {
-  syslog(getTxLine());
-  syslog(getRxLine());
+  Serial.println(getTxLine());
+  Serial.println(getRxLine());
 }
  
 void setup() {
@@ -91,6 +91,8 @@ void setup() {
   
   //end new code
   
+  //FIXME: add ntp sync time
+//  https://www.geekstips.com/arduino-time-sync-ntp-server-esp8266-udp/
   SetupWiFi();
   
   LoraHelper_setup();  
@@ -108,7 +110,7 @@ void setup() {
   }
 
 
-  syslog("init ok");
+  Serial.println("init ok");
 
 
   setRxLine("");
@@ -122,12 +124,12 @@ void setup() {
   controll.add(loraReceiveThread);
 
   loraSendThread->onRun(loraSendThreadCallback);
-  loraSendThread->setInterval(10000);
+  loraSendThread->setInterval(1000);
   controll.add(loraSendThread);
 
   if (isLisa()) {
     gpsReadThread->onRun(gpsReadThreadCallback);
-    gpsReadThread->setInterval(10000);
+    gpsReadThread->setInterval(30000);
     controll.add(gpsReadThread);
   } 
   

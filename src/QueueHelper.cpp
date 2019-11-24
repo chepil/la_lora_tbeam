@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <HardwareSerial.h>
 
+#include "Time.h"
+
 
 float multiplier2 = 1.5152814573F;
 
@@ -113,8 +115,11 @@ void parseBuffer(uint8_t msg[]) {
     timeStr = timeStr + (char) tmp.time[i];
   }
 
+  time_t t = now();
+  uint8_t sec = second(t);
+ 
   String logString = String(serialNumber)+","+String(counter)+","+String(chLat)+","+String(chLng)+","+String(dateStr)+","+String(timeStr);
-  Serial.println("-> "+logString);
+  Serial.println("-> "+String(sec)+"sec. "+logString);
 
   BluetoothHelper_SerialWrite(logString);
 

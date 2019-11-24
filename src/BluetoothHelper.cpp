@@ -22,12 +22,12 @@ void BluetoothHelper_loop() {
 }
 
 void BluetoothHelper_SerialWrite(String inputString) {
-    Serial.println("bluetooth inputString: "+inputString);
+    //Serial.println("bluetooth inputString: "+inputString);
     //SerialBT.write(0xAA);
     if (SerialBT.connected(5000)) {
         String writeString = ">"+inputString+"<\n";
         int len = writeString.length();
-        Serial.println("writeString.length is "+String(len));
+        //Serial.println("writeString.length is "+String(len));
 
         byte plain[len];
         writeString.getBytes(plain, len);

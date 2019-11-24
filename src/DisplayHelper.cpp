@@ -4,6 +4,7 @@
 #include "DisplayHelper.h"
 #include "main.h"
 #include "Tools.h"
+#include "ButtonSwitch.h"
 
 
 //#include <U8x8lib.h>
@@ -18,6 +19,7 @@ String localIP = "";
 String bottomline = "";
 String lisaZarya = "";
 String serialNumber = "";
+byte senderTimer = 0;
 
 SSD1306 display(0x3c, 21, 22);
 #define SDA 21
@@ -62,7 +64,12 @@ void DisplayHelper_draw() {
     display.drawStringMaxWidth(0, 0,   128, serialNumber + ":" + lisaZarya);
 
     display.setFont(ArialMT_Plain_10);
-     
+
+    if (isLisa()) {
+        //send timer seconds show
+        display.drawStringMaxWidth(110, 0,   28, String(senderTimer, DEC));
+    }
+
     display.drawStringMaxWidth(0, 17 , 128, TXline);
     
     display.drawStringMaxWidth(0, 34 , 128, RXline);
@@ -118,6 +125,10 @@ void setLisaZarya(String str) {
 
 void setSerialNumber(String str) {
     serialNumber = str;
+}
+
+void setSenderTimer(byte timer) {
+    senderTimer = timer;
 }
 
 String getTxLine() {

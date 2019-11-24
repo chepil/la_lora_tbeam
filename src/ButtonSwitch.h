@@ -4,5 +4,6 @@
 void ButtonSwitch_setup(void);
 void ButtonSwitch_loop(void);
 bool isLisa(void);
+int getSenderTimer();
 
 #endif /* BUTTONSWITCH_H */

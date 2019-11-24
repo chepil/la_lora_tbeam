@@ -74,13 +74,13 @@ void smartDelay(unsigned long ms) {
     coordinates.isValid = gps.location.isValid() && gps.date.isValid() && gps.time.isValid();
     
     String isValidStr = (coordinates.isValid ? "true" : "false");
-    syslog("");
-    syslog("isValid: " + isValidStr);
+    Serial.println("");
+    Serial.println("isValid: " + isValidStr);
     
-    syslog("lat: "+String(coordinates.lat,8)+", lng: "+String(coordinates.lng,8));
-    syslog("date: "+String(coordinates.date));
-    syslog("time: "+String(coordinates.time));
-    syslog("");
+    Serial.println("lat: "+String(coordinates.lat,8)+", lng: "+String(coordinates.lng,8));
+    Serial.println("date: "+String(coordinates.date));
+    Serial.println("time: "+String(coordinates.time));
+    Serial.println("");
   }  
 }
 
@@ -88,9 +88,9 @@ void GpsHelper_loop() {
   if (isLisa() == false) {
     return;
   }
-  smartDelay(5000);
-  if (millis() > 5000 && gps.charsProcessed() < 10) {
-    syslog("No GPS data received: check wiring");
+  smartDelay(1000);
+  if (millis() > 1000 && gps.charsProcessed() < 10) {
+    Serial.println("No GPS data received: check wiring");
     //syslog(F("No GPS data received: check wiring"));
   }
 }

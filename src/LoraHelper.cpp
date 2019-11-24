@@ -7,6 +7,7 @@
 #include "ButtonSwitch.h"
 
 #include "QueueHelper.h"
+#include "Time.h"
 
 #define BAND  433000E3
 #define RST     14   // GPIO14 -- SX1278's RESET
@@ -26,6 +27,7 @@ unsigned long counter = 0;
 Coordinates lastCoordinates = {};
 
 void cbk(int packetSize);
+bool itsTimeToSend();
 
 void LoraHelper_setup(void) {
 
@@ -43,7 +45,35 @@ void LoraHelper_setup(void) {
     counter = 0;
 }
 
+bool itsTimeToSend() {
+  bool result = false;
+
+  time_t t = now();
+  //uint8_t min = minute(t);
+  uint8_t sec = second(t); 
+
+  if (sec%5 == 0) {
+    Serial.println("sec time: "+String(sec));
+  }
+
+  //TODO переделать на учет 2х минут, с четными/нечетными минутами, и распределить 120 секунд на 2 минуты
+  int loraSenderTimer = getSenderTimer();
+  if (loraSenderTimer < 60) {
+    result = (loraSenderTimer == sec);
+  }
+
+
+  return result;
+}
+
 void LoraHelper_send_loop() {
+
+  if (!itsTimeToSend()) {
+    return;
+  }
+  Serial.println("LoraHelper_send_loop itsTimeToSend");
+
+
   Coordinates currentCoordinates = getCoordinates(); 
   /*if (
     (currentCoordinates.isValid) && (
@@ -81,17 +111,17 @@ void LoraHelper_send_loop() {
     PACKET tmp; //Re-make the struct
     memcpy(&tmp, b, sizeof(tmp));
 
-    syslog(" ");
-    syslog("----");
-    syslog("size: "+String(sizeof(b)));
-    syslog("tmp size: "+String(sizeof(tmp)));
-    syslog("tmp packet.serialNumber: "+String(tmp.serialNumber));
-    syslog("tmp packet.counter: "+String(tmp.counter));
-    syslog("tmp packet.lat: "+String(currentCoordinates.lat,8));
-    syslog("tmp packet.lng: "+String(currentCoordinates.lng,8));
+    Serial.println(" ");
+    Serial.println("----");
+    Serial.println("size: "+String(sizeof(b)));
+    Serial.println("tmp size: "+String(sizeof(tmp)));
+    Serial.println("tmp packet.serialNumber: "+String(tmp.serialNumber));
+    Serial.println("tmp packet.counter: "+String(tmp.counter));
+    Serial.println("tmp packet.lat: "+String(currentCoordinates.lat,8));
+    Serial.println("tmp packet.lng: "+String(currentCoordinates.lng,8));
 
-    syslog("tmp packet.date: "+String(tmp.date));
-    syslog("tmp packet.time: "+String(tmp.time));
+    Serial.println("tmp packet.date: "+String(tmp.date));
+    Serial.println("tmp packet.time: "+String(tmp.time));
   
     // send packet
     LoRa.beginPacket();

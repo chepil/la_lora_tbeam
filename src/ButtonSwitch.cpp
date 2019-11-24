@@ -12,6 +12,7 @@ int ledPin = LedPinV1;
 
 struct SavedObject {
   byte isLisa;
+  byte loraSendTimer;
 };
 int eeAddressForSavedObject = 0;
 
@@ -23,10 +24,16 @@ void setLisaZaryaOnDisplay();
 void onLongPress();
 void onShortPress();
 void clearEEPROM();
+byte senderTimer();
+int getSenderTimer();
+void restoreLedState();
+void blinkLed(int count);
+
 
 void ButtonSwitch_setup() {
     savedObject = {
-        0
+        0,
+        10,
     };
 
     EEPROM.begin(sizeof(savedObject));
@@ -109,7 +116,7 @@ void ButtonSwitch_loop() {
         if (touchCounter > 0) {
             touchCounter = 0;
             onShortPress();
-            delay(300);
+            delay(100);
         }
     }
 }
@@ -126,29 +133,46 @@ void onLongPress() {
         if (savedObject.isLisa != 1) {
             Serial.println("switch savedObject.isLisa = 1");
             savedObject.isLisa = 1;
-            if (isAxpEnabled()) {
-                SetAxpChgLed(true);
-            } else {
-                digitalWrite(ledPin, HIGH); 
-            }
+            
         } else {
             Serial.println("switch savedObject.isLisa = 0");
             savedObject.isLisa = 0;
-            if (isAxpEnabled()) {
-                SetAxpChgLed(false);
-            } else {
-                digitalWrite(ledPin, LOW); 
-            }
+            
         }
         Serial.println("save savedObject: " + String(savedObject.isLisa));
         EEPROM.put(eeAddressForSavedObject, savedObject);
         EEPROM.commit();
 
-        setLisaZaryaOnDisplay();
+        restoreLedState();
 }
 
 void onShortPress() {
     Serial.println("Short press !!!");
+    EEPROM.get(eeAddressForSavedObject, savedObject);
+    byte loraSendTimer = savedObject.loraSendTimer;
+    //Serial.println("current loraSendTimer: "+String(loraSendTimer, DEC));
+    if (loraSendTimer >= 0 && loraSendTimer < 120) {
+        loraSendTimer = loraSendTimer + 5;
+        if (loraSendTimer >= 120) {
+            loraSendTimer = 0;
+        }
+    } else {
+        loraSendTimer = 0;
+    }
+    savedObject.loraSendTimer = loraSendTimer;
+    Serial.println("loraSendTimer: "+String(loraSendTimer, DEC));
+
+    EEPROM.put(eeAddressForSavedObject, savedObject);
+    EEPROM.commit();
+
+    setLisaZaryaOnDisplay();
+
+    //мигнуть светодиодом кратное число раз, для 0==1, 5==2, 10==3 и т.д.
+    //TODO: blink led only if display not availabel
+    //int blinkCounter = loraSendTimer/5+1;
+    //Serial.println("will blink: "+String(blinkCounter)+" times");
+    //blinkLed(blinkCounter);
+    
 }
 
 void clearEEPROM() {
@@ -159,6 +183,7 @@ void clearEEPROM() {
         EEPROM.write(i, 0);
     }
     savedObject.isLisa = 0;
+    savedObject.loraSendTimer = 0;
     EEPROM.put(eeAddressForSavedObject, savedObject);
 
     EEPROM.commit();
@@ -168,9 +193,66 @@ void setLisaZaryaOnDisplay() {
     String lisaZarya =  + (isLisa() ? "FOX" : "DAWN"); 
     setLisaZarya(lisaZarya);
 
+    setSenderTimer(senderTimer());
+
     DisplayHelper_draw();
 }
 
 bool isLisa() {
     return (savedObject.isLisa == 1);
+}
+
+byte senderTimer() {
+    return savedObject.loraSendTimer;
+}
+
+int getSenderTimer() {
+    EEPROM.get(eeAddressForSavedObject, savedObject);
+    byte loraSendTimer = savedObject.loraSendTimer;
+    return loraSendTimer;
+}
+
+void blinkLed(int count) {
+    if (isAxpEnabled()) {
+        SetAxpChgLed(false);
+    } else {
+        digitalWrite(ledPin, LOW); 
+    }
+    delay(1000);
+    
+    for (int i=1; i<count; i++) {
+        if (isAxpEnabled()) {
+            SetAxpChgLed(false);
+        } else {
+            digitalWrite(ledPin, LOW); 
+        }
+        delay(300);
+        if (isAxpEnabled()) {
+            SetAxpChgLed(true);
+        } else {
+            digitalWrite(ledPin, HIGH); 
+        }
+        delay(100);
+    }
+    delay(500);
+    //restore LED state
+    restoreLedState();
+
+}
+
+void restoreLedState() {
+    EEPROM.get(eeAddressForSavedObject, savedObject);
+    if (savedObject.isLisa == 1) {
+        if (isAxpEnabled()) {
+            SetAxpChgLed(true);
+        } else {
+            digitalWrite(ledPin, HIGH); 
+        }
+    } else
+        if (isAxpEnabled()) {
+            SetAxpChgLed(false);
+        } else {
+            digitalWrite(ledPin, LOW); 
+        }
+    setLisaZaryaOnDisplay();
 }
