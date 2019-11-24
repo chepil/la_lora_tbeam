@@ -1,7 +1,7 @@
 #ifndef BLUETOOTHHELPER_H
 #define BLUETOOTHHELPER_H
 
-#include <Arduino.h>
+#include <WString.h>
 
 void BluetoothHelper_setup(void);
 void BluetoothHelper_loop(void);

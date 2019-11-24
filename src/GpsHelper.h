@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #ifndef GPSHELPER_H
 #define GPSHELPER_H
 

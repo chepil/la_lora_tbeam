@@ -1,9 +1,15 @@
-#ifndef MAIN_H
-#define MAIN_H
+#include <Arduino.h>
+
+#include <WString.h>
+#include "stdint.h"
+#include <stdio.h>
 
 #include <SPI.h>
 #include "LoraHelper.h"
 
+
+#ifndef MAIN_H
+#define MAIN_H
 
 #define SCK     5    // GPIO5  -- SX1278's SCK
 #define MISO    19   // GPIO19 -- SX1278's MISnO

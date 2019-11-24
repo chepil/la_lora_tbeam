@@ -2,7 +2,6 @@
 
 #include <Wire.h>
 
-#include "AxpHelper.h"
 #include "ButtonSwitch.h"
 #include "DisplayHelper.h"
 #include "Tools.h"
@@ -10,19 +9,24 @@
 #include "SyslogHelper.h"
 #include "GpsHelper.h"
 
-#include <Thread.h>
+
 //#include <ThreadRunOnce.h>
-#include <ThreadController.h>
 
 #include "QueueHelper.h"
 #include "BluetoothHelper.h"
+
+#include "AxpHelper.h"
+#include <Thread.h>
+#include <ThreadController.h>
 
 // ThreadController that will controll all threads
 ThreadController controll = ThreadController();
 
 Thread* buttonsThread = new Thread();
 void buttonsThreadCallback() {
+  
   ButtonSwitch_loop();
+
   if (isAxpEnabled()) {
     if (isPEKShortPress()) {
       Serial.println("isPEKShortPressIRQ");
@@ -110,7 +114,7 @@ void setup() {
   setRxLine("");
 
   buttonsThread->onRun(buttonsThreadCallback);
-  buttonsThread->setInterval(1000);
+  buttonsThread->setInterval(300);
   controll.add(buttonsThread);
 
   loraReceiveThread->onRun(loraReceiveThreadCallback);

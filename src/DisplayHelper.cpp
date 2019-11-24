@@ -59,7 +59,7 @@ void DisplayHelper_draw() {
   if (!getDown()) {
     //display.setFont(ArialMT_Plain_16);
         
-    display.drawStringMaxWidth(0, 0,   128, serialNumber + ": " + lisaZarya);
+    display.drawStringMaxWidth(0, 0,   128, serialNumber + ":" + lisaZarya);
 
     display.setFont(ArialMT_Plain_10);
      

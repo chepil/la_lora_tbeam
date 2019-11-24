@@ -1,6 +1,8 @@
 #ifndef DISPLAYHELPER_H
 #define DISPLAYHELPER_H
 
+#include <WString.h>
+
 void setTxLine(String str);
 void setRxLine(String str);
 void setLocalIP(String str);

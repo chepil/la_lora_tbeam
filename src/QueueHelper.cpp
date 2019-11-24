@@ -2,6 +2,10 @@
 #include <cppQueue.h>
 #include "BluetoothHelper.h"
 
+//#include <Arduino.h>
+#include <stdio.h>
+#include <HardwareSerial.h>
+
 
 float multiplier2 = 1.5152814573F;
 

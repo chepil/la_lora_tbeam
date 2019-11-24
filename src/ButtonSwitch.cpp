@@ -17,20 +17,12 @@ int eeAddressForSavedObject = 0;
 
 SavedObject savedObject;
 
+int touchCounter = 0;
+
 void setLisaZaryaOnDisplay();
-
-void clearEEPROM() {
-    Serial.println("clear EEPROM");
-    int len = EEPROM.length();
-    Serial.println("EEPROM length: " + String(len));
-    for (int i=0; i<EEPROM.length(); i++) {     // Обнуляем EEPROM - приводим в первоначальное состояние
-        EEPROM.write(i, 0);
-    }
-    savedObject.isLisa = 0;
-    EEPROM.put(eeAddressForSavedObject, savedObject);
-
-    EEPROM.commit();
-}
+void onLongPress();
+void onShortPress();
+void clearEEPROM();
 
 void ButtonSwitch_setup() {
     savedObject = {
@@ -84,26 +76,46 @@ void ButtonSwitch_setup() {
             digitalWrite(ledPin, HIGH); 
         }
     }
-
     setLisaZaryaOnDisplay();
 }
 
-void setLisaZaryaOnDisplay() {
-    String lisaZarya =  + (isLisa() ? "LISA" : "ZARYA"); 
-    setLisaZarya(lisaZarya);
 
-    DisplayHelper_draw();
-}
 
 void ButtonSwitch_loop() {
-
     buttonState = digitalRead(buttonPin);
 
       //detect if button is pushed
     if (buttonState == LOW) {
-        Serial.println("BUTTON PUSHED");
+        //Serial.println("BUTTON PUSHED");
 
-        EEPROM.get(eeAddressForSavedObject, savedObject);
+        touchCounter++;
+
+        if (touchCounter > 3) {
+            onLongPress();
+            touchCounter = 0;
+            delay(2000);
+        }
+
+/*
+        if (savedObject.isLisa != 1) {
+            
+        } else {
+            
+        }*/
+        
+    } else {
+        //Serial.println("BUTTON DETACH");
+
+        if (touchCounter > 0) {
+            touchCounter = 0;
+            onShortPress();
+            delay(300);
+        }
+    }
+}
+
+void onLongPress() {
+    EEPROM.get(eeAddressForSavedObject, savedObject);
         /*Serial.println("----savedObject.isLisa---- "+String(savedObject.isLisa));
         if (savedObject.isLisa != 1) {
             Serial.println("current savedObject.isLisa: 0");
@@ -133,15 +145,30 @@ void ButtonSwitch_loop() {
         EEPROM.commit();
 
         setLisaZaryaOnDisplay();
+}
 
-/*
-        if (savedObject.isLisa != 1) {
-            
-        } else {
-            
-        }*/
-        delay(2000);
+void onShortPress() {
+    Serial.println("Short press !!!");
+}
+
+void clearEEPROM() {
+    Serial.println("clear EEPROM");
+    int len = EEPROM.length();
+    Serial.println("EEPROM length: " + String(len));
+    for (int i=0; i<EEPROM.length(); i++) {     // Обнуляем EEPROM - приводим в первоначальное состояние
+        EEPROM.write(i, 0);
     }
+    savedObject.isLisa = 0;
+    EEPROM.put(eeAddressForSavedObject, savedObject);
+
+    EEPROM.commit();
+}
+
+void setLisaZaryaOnDisplay() {
+    String lisaZarya =  + (isLisa() ? "FOX" : "DAWN"); 
+    setLisaZarya(lisaZarya);
+
+    DisplayHelper_draw();
 }
 
 bool isLisa() {
