@@ -78,7 +78,10 @@ void DisplayHelper_draw() {
     String battery = "";
     if (isAxpEnabled()) {
         float battVoltage = getBatteryVoltage();
-        battery = "V: "+String(battVoltage/1000,2)+", ";
+        char bat[5] = {0,0,0,0,0};
+        sprintf(bat, "%02.02f", battVoltage/1000);
+        battery = "v: "+String(bat)+", ";
+        //Serial.println("battery: "+battery);
     } 
 
 
@@ -87,10 +90,19 @@ void DisplayHelper_draw() {
     uint8_t sec = second(t); 
     uint8_t min = minute(t); 
     uint8_t hr = hour(t); 
-    String currentTime = String(hr)+":"+String(min)+":"+String(sec);
 
-    //display.setFont(ArialMT_Plain_10);
-    display.drawStringMaxWidth(0, 50 , 128, battery+localIP+", "+currentTime);
+    char buffer[9] = {0,0,0,0,0,0,0,0,0};
+    sprintf(buffer,"%02d:%02d:%02d",hr,min,sec);
+
+    String currentTime = String(buffer);
+    //Serial.println("currentTime: "+currentTime);
+
+    String printL = battery+localIP+", "+currentTime;
+    //Serial.println("printLine: "+printL);
+
+    display.setFont(ArialMT_Plain_10);
+    display.drawStringMaxWidth(0, 50 , 128, printL);
+    
   } else {
       display.drawStringMaxWidth(4, 26,   128, "...SHUTDOWN...");
   }

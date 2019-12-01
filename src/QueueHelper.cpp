@@ -122,6 +122,8 @@ void parseBuffer(uint8_t msg[]) {
   String logString = String(serialNumber)+","+String(counter)+","+String(chLat)+","+String(chLng)+","+String(dateStr)+","+String(timeStr);
   debugLog("-> "+String(sec)+"sec. "+logString);
 
+  debugLog("");
+
   BluetoothHelper_SerialWrite(logString);
 
   DisplayHelper_draw();

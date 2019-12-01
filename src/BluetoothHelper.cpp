@@ -22,6 +22,10 @@ void BluetoothHelper_loop() {
 }
 
 void BluetoothHelper_SerialWrite(String inputString) {
+
+    return;
+    //FIXME: временно отключено, crash в режиме лисы
+
     //Serial.println("bluetooth inputString: "+inputString);
     //SerialBT.write(0xAA);
     if (SerialBT.connected(5000)) {

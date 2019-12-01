@@ -83,7 +83,7 @@ void sendlog()
  
 void setup() {
   SPI.begin(SCK,MISO,MOSI,SS);
-  Serial.begin(115200);
+  Serial.begin(38400);
   while (!Serial);
   DisplayHelper_setup();
 
@@ -107,8 +107,8 @@ void setup() {
 
   SyslogHelper_setup();
 
-  if (isLisa()) {
-    GpsHelper_setup();
+  GpsHelper_setup();
+  if (isLisa()) {  
     //TODO: send gps coordinates via bluetooth to smartphone 
   } else {
     BluetoothHelper_setup();
@@ -148,9 +148,9 @@ void setup() {
   controll.add(ntpClientThread);
 
 
-//  displayUpdateThread->onRun(displayUpdateThreadCallback);
-//  displayUpdateThread->setInterval(1000);
-//  controll.add(displayUpdateThread);
+  displayUpdateThread->onRun(displayUpdateThreadCallback);
+  displayUpdateThread->setInterval(1000);
+  controll.add(displayUpdateThread);
   //GpsHelper_loop();
 
   DisplayHelper_draw();

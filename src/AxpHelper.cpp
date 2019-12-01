@@ -23,13 +23,13 @@ void AxpSetup() {
         axpEnabled = true;
         debugLog("AXP192 Begin PASS");
         
-        if (isLisa()) {
+        //if (isLisa()) {
             axp.setPowerOutPut(AXP192_LDO2, AXP202_ON);
             axp.setPowerOutPut(AXP192_LDO3, AXP202_ON);
             axp.setPowerOutPut(AXP192_DCDC2, AXP202_ON);
             axp.setPowerOutPut(AXP192_EXTEN, AXP202_ON);
             axp.setPowerOutPut(AXP192_DCDC1, AXP202_ON);
-        }
+        //}
 
         //axp.setChgLEDMode(AXP20X_LED_LOW_LEVEL);
         axp.setChgLEDMode(AXP20X_LED_OFF);
