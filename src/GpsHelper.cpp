@@ -4,12 +4,20 @@
 #include "AxpHelper.h"   
 #include "SyslogHelper.h"    
 #include "ButtonSwitch.h"
+#include "Tools.h"
+
+#include <Wire.h>
+//#include <time.h>
+//#include <sys/time.h>
+#include <Time.h>
 
 TinyGPSPlus gps;                            
 HardwareSerial SerialGPS(1);     
 
 int GPS_RX = 12;
 int GPS_TX = 34;
+
+bool needFixTime = true;
 
 Coordinates coordinates;
 
@@ -44,6 +52,20 @@ void smartDelay(unsigned long ms) {
   if (str != "") {
     //syslog(str);
 
+  if (needFixTime && gps.date.isValid() && gps.time.isValid()) {
+      needFixTime = false;
+
+      uint16_t year = gps.date.year();
+      uint8_t month = gps.date.month();
+      uint8_t day = gps.date.day();
+      uint8_t hour = gps.time.hour();
+      uint8_t minute = gps.time.minute();
+      uint8_t second = gps.time.second();
+
+      setTime(hour,minute,second,day, month, year);
+
+    }
+
     if (gps.location.isValid()) {
       coordinates.lat = gps.location.lat();
       coordinates.lng = gps.location.lng();
@@ -71,16 +93,18 @@ void smartDelay(unsigned long ms) {
       sprintf(coordinates.time,"000000");
     }
 
+    
+
     coordinates.isValid = gps.location.isValid() && gps.date.isValid() && gps.time.isValid();
     
     String isValidStr = (coordinates.isValid ? "true" : "false");
-    Serial.println("");
-    Serial.println("isValid: " + isValidStr);
+    debugLog("");
+    debugLog("isValid: " + isValidStr);
     
-    Serial.println("lat: "+String(coordinates.lat,8)+", lng: "+String(coordinates.lng,8));
-    Serial.println("date: "+String(coordinates.date));
-    Serial.println("time: "+String(coordinates.time));
-    Serial.println("");
+    debugLog("lat: "+String(coordinates.lat,8)+", lng: "+String(coordinates.lng,8));
+    debugLog("date: "+String(coordinates.date));
+    debugLog("time: "+String(coordinates.time));
+    debugLog("");
   }  
 }
 
@@ -90,7 +114,7 @@ void GpsHelper_loop() {
   }
   smartDelay(1000);
   if (millis() > 1000 && gps.charsProcessed() < 10) {
-    Serial.println("No GPS data received: check wiring");
+    debugLog("No GPS data received: check wiring");
     //syslog(F("No GPS data received: check wiring"));
   }
 }

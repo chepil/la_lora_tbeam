@@ -9,6 +9,7 @@
 #include "QueueHelper.h"
 #include "Time.h"
 
+
 #define BAND  433000E3
 #define RST     14   // GPIO14 -- SX1278's RESET
 #define DI0     26   // GPIO26 -- SX1278's IRQ(Interrupt Request)
@@ -33,7 +34,7 @@ void LoraHelper_setup(void) {
 
     LoRa.setPins(SS,RST,DI0);
     if (!LoRa.begin(BAND)) {
-        Serial.println("Starting LoRa ...");
+        debugLog("Starting LoRa ...");
         while (1);
     }
     LoRa.onReceive(cbk);
@@ -53,7 +54,7 @@ bool itsTimeToSend() {
   uint8_t sec = second(t); 
 
   if (sec%5 == 0) {
-    Serial.println("sec time: "+String(sec));
+    debugLog("sec time: "+String(sec));
   }
 
   //TODO переделать на учет 2х минут, с четными/нечетными минутами, и распределить 120 секунд на 2 минуты
@@ -71,7 +72,7 @@ void LoraHelper_send_loop() {
   if (!itsTimeToSend()) {
     return;
   }
-  Serial.println("LoraHelper_send_loop itsTimeToSend");
+  debugLog("LoraHelper_send_loop itsTimeToSend");
 
 
   Coordinates currentCoordinates = getCoordinates(); 
@@ -111,17 +112,17 @@ void LoraHelper_send_loop() {
     PACKET tmp; //Re-make the struct
     memcpy(&tmp, b, sizeof(tmp));
 
-    Serial.println(" ");
-    Serial.println("----");
-    Serial.println("size: "+String(sizeof(b)));
-    Serial.println("tmp size: "+String(sizeof(tmp)));
-    Serial.println("tmp packet.serialNumber: "+String(tmp.serialNumber));
-    Serial.println("tmp packet.counter: "+String(tmp.counter));
-    Serial.println("tmp packet.lat: "+String(currentCoordinates.lat,8));
-    Serial.println("tmp packet.lng: "+String(currentCoordinates.lng,8));
+    debugLog(" ");
+    debugLog("----");
+    debugLog("size: "+String(sizeof(b)));
+    debugLog("tmp size: "+String(sizeof(tmp)));
+    debugLog("tmp packet.serialNumber: "+String(tmp.serialNumber));
+    debugLog("tmp packet.counter: "+String(tmp.counter));
+    debugLog("tmp packet.lat: "+String(currentCoordinates.lat,8));
+    debugLog("tmp packet.lng: "+String(currentCoordinates.lng,8));
 
-    Serial.println("tmp packet.date: "+String(tmp.date));
-    Serial.println("tmp packet.time: "+String(tmp.time));
+    debugLog("tmp packet.date: "+String(tmp.date));
+    debugLog("tmp packet.time: "+String(tmp.time));
   
     // send packet
     LoRa.beginPacket();
@@ -144,9 +145,9 @@ void LoraHelper_receive_loop() {
 
   int packetSize = LoRa.parsePacket();
   if (packetSize>0) {
-    Serial.println("");
-    Serial.println(String(packetSize));
-    Serial.println("");
+    debugLog("");
+    debugLog(String(packetSize));
+    debugLog("");
   } else {
     //Serial.print(String(packetSize));
   }
@@ -164,7 +165,7 @@ void cbk(int packetSize) {
 
   String packetStr = "";
   String packSize = String(packetSize,DEC);
-  //Serial.println("packSize: "+packSize);
+  //debugLog("packSize: "+packSize);
 
   uint8_t msg[52];
   for (int i=0; i<52; i++) {
@@ -179,11 +180,11 @@ void cbk(int packetSize) {
     msg[i] = bb;
     packetStr += ch;  
   }
-  //Serial.println("");
-  //Serial.println(packetStr);
-  //Serial.println("");
+  //debugLog("");
+  //debugLog(packetStr);
+  //debugLog("");
 
-  //Serial.println("PushToQueue");
+  //debugLog("PushToQueue");
 
   PushToQueue(msg);
   return;
@@ -200,31 +201,31 @@ void cbk(int packetSize) {
   for (int i=packetSize; i<52; i++) {
     b[i] = 0;
   }
-  Serial.println("");
-  Serial.println(packetStr);
-  Serial.println("");
+  debugLog("");
+  debugLog(packetStr);
+  debugLog("");
 
-  Serial.println("PushToQueue");
+  debugLog("PushToQueue");
   
 
   PushToQueue(packetStr);
   return;*/
 
-  //Serial.println("");
-  //Serial.println(packetStr);
-  //Serial.println("");
+  //debugLog("");
+  //debugLog(packetStr);
+  //debugLog("");
   char b[52];
 
   //rssi = "RSSI " + String(LoRa.packetRssi(), DEC);
   rssi = ""+String(LoRa.packetRssi(), DEC);
-  //Serial.println("--rssi-- "+ rssi);
+  //debugLog("--rssi-- "+ rssi);
   PACKET tmp; //Re-make the struct
   memcpy(&tmp, b, sizeof(tmp));
 
 
   unsigned long counter = tmp.counter;
   String serialNumber = String(tmp.serialNumber);
-  Serial.println(serialNumber+", rssi: " +rssi);
+  debugLog(serialNumber+", rssi: " +rssi);
 
   char tmpLat[12] = {0};
   for (int i=0; i<11; i++) {
@@ -260,7 +261,7 @@ void cbk(int packetSize) {
   }
 
   String logString = ""+String(serialNumber)+","+String(counter)+","+String(chLat)+","+String(chLng)+","+String(date)+","+String(time);
-  Serial.println(logString);
+  debugLog(logString);
 
   //crash if update display from here
   //DisplayHelper_draw();

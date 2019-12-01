@@ -29,10 +29,10 @@ void buttonsThreadCallback() {
 
   if (isAxpEnabled()) {
     if (isPEKShortPress()) {
-      Serial.println("isPEKShortPressIRQ");
+      debugLog("isPEKShortPressIRQ");
     }
     if (isPEKLongPress()) {
-      Serial.println("isPEKLongPressIRQ");
+      debugLog("isPEKLongPressIRQ");
       Shutdown();
     }
   }
@@ -65,6 +65,11 @@ void queueHelperThreadCallback() {
   QueueHelper_loop();
 }
 
+Thread* ntpClientThread = new Thread();
+void ntpClientThreadCallback() {
+  NtpClientThread_loop();
+}
+
 void sendlog();
 void shutdown(const char *msg);
 
@@ -72,8 +77,8 @@ bool init_ok = false;
 
 void sendlog()
 {
-  Serial.println(getTxLine());
-  Serial.println(getRxLine());
+  debugLog(getTxLine());
+  debugLog(getRxLine());
 }
  
 void setup() {
@@ -110,7 +115,7 @@ void setup() {
   }
 
 
-  Serial.println("init ok");
+  debugLog("init ok");
 
 
   setRxLine("");
@@ -136,6 +141,11 @@ void setup() {
   queueHelperThread->onRun(queueHelperThreadCallback);
   queueHelperThread->setInterval(10000);
   controll.add(queueHelperThread);
+
+
+  ntpClientThread->onRun(ntpClientThreadCallback);
+  ntpClientThread->setInterval(1000);
+  controll.add(ntpClientThread);
 
 
 //  displayUpdateThread->onRun(displayUpdateThreadCallback);

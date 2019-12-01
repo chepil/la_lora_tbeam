@@ -5,6 +5,7 @@
 #include "AxpHelper.h"
 #include "DisplayHelper.h"
 #include "main.h"
+#include "Tools.h"
 
 int buttonPin = ButtonPinV2;
 int buttonState = 0;
@@ -51,23 +52,23 @@ void ButtonSwitch_setup() {
     }
     pinMode(buttonPin, INPUT);
     
-    Serial.println("button pin is " + String(buttonPin));
+    debugLog("button pin is " + String(buttonPin));
 
     //savedObject.isLisa = 0;
 
     /* read saved data */
-    Serial.println("read saved data");
+    debugLog("read saved data");
     EEPROM.get(eeAddressForSavedObject, savedObject);
   
     if (sizeof(savedObject)>0) {
-        Serial.println("savedObject NOT NULL");
+        debugLog("savedObject NOT NULL");
     } else {
-        Serial.println("savedObject IS NULL");
+        debugLog("savedObject IS NULL");
     }
 
     if (savedObject.isLisa != 1) {
         //Serial.println("init savedObject.isLisa: 0");
-        Serial.println("init savedObject.isLisa: "+String(savedObject.isLisa));
+        debugLog("init savedObject.isLisa: "+String(savedObject.isLisa));
 
         if (isAxpEnabled()) {
             SetAxpChgLed(false);
@@ -75,7 +76,7 @@ void ButtonSwitch_setup() {
             digitalWrite(ledPin, LOW); 
         }
     } else {
-        Serial.println("init savedObject.isLisa: 1");
+        debugLog("init savedObject.isLisa: 1");
 
         if (isAxpEnabled()) {
             SetAxpChgLed(true);
@@ -131,15 +132,15 @@ void onLongPress() {
         }*/
 
         if (savedObject.isLisa != 1) {
-            Serial.println("switch savedObject.isLisa = 1");
+            debugLog("switch savedObject.isLisa = 1");
             savedObject.isLisa = 1;
             
         } else {
-            Serial.println("switch savedObject.isLisa = 0");
+            debugLog("switch savedObject.isLisa = 0");
             savedObject.isLisa = 0;
             
         }
-        Serial.println("save savedObject: " + String(savedObject.isLisa));
+        debugLog("save savedObject: " + String(savedObject.isLisa));
         EEPROM.put(eeAddressForSavedObject, savedObject);
         EEPROM.commit();
 
@@ -147,7 +148,7 @@ void onLongPress() {
 }
 
 void onShortPress() {
-    Serial.println("Short press !!!");
+    debugLog("Short press !!!");
     EEPROM.get(eeAddressForSavedObject, savedObject);
     byte loraSendTimer = savedObject.loraSendTimer;
     //Serial.println("current loraSendTimer: "+String(loraSendTimer, DEC));
@@ -160,7 +161,7 @@ void onShortPress() {
         loraSendTimer = 0;
     }
     savedObject.loraSendTimer = loraSendTimer;
-    Serial.println("loraSendTimer: "+String(loraSendTimer, DEC));
+    debugLog("loraSendTimer: "+String(loraSendTimer, DEC));
 
     EEPROM.put(eeAddressForSavedObject, savedObject);
     EEPROM.commit();
@@ -176,9 +177,9 @@ void onShortPress() {
 }
 
 void clearEEPROM() {
-    Serial.println("clear EEPROM");
+    debugLog("clear EEPROM");
     int len = EEPROM.length();
-    Serial.println("EEPROM length: " + String(len));
+    debugLog("EEPROM length: " + String(len));
     for (int i=0; i<EEPROM.length(); i++) {     // Обнуляем EEPROM - приводим в первоначальное состояние
         EEPROM.write(i, 0);
     }

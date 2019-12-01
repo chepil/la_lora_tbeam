@@ -1,5 +1,6 @@
 #include "AxpHelper.h"
 #include "ButtonSwitch.h"
+#include "Tools.h"
 
 AXP20X_Class axp;
 
@@ -20,7 +21,7 @@ void AxpSetup() {
 
     if (ret == AXP_PASS) {
         axpEnabled = true;
-        Serial.println("AXP192 Begin PASS");
+        debugLog("AXP192 Begin PASS");
         
         if (isLisa()) {
             axp.setPowerOutPut(AXP192_LDO2, AXP202_ON);
@@ -37,7 +38,7 @@ void AxpSetup() {
         //axp.setTimeOutShutdown(true);
 
     } else {
-        Serial.println("AXP192 Begin FAIL");
+        debugLog("AXP192 Begin FAIL");
         axpEnabled = false;
     }
 }

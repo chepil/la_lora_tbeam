@@ -5,6 +5,7 @@
 #include "main.h"
 #include "Tools.h"
 #include "ButtonSwitch.h"
+#include "Time.h"
 
 
 //#include <U8x8lib.h>
@@ -79,8 +80,17 @@ void DisplayHelper_draw() {
         float battVoltage = getBatteryVoltage();
         battery = "V: "+String(battVoltage/1000,2)+", ";
     } 
+
+
+    time_t t = now();
+    //uint8_t min = minute(t);
+    uint8_t sec = second(t); 
+    uint8_t min = minute(t); 
+    uint8_t hr = hour(t); 
+    String currentTime = String(hr)+":"+String(min)+":"+String(sec);
+
     //display.setFont(ArialMT_Plain_10);
-    display.drawStringMaxWidth(0, 50 , 128, battery+localIP);
+    display.drawStringMaxWidth(0, 50 , 128, battery+localIP+", "+currentTime);
   } else {
       display.drawStringMaxWidth(4, 26,   128, "...SHUTDOWN...");
   }

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "SyslogHelper.h"
+#include "Tools.h"
 //#include <Syslog.h>
 //#include <WiFiUdp.h>
 
@@ -16,6 +17,8 @@ void SyslogHelper_setup() {
 }
 
 void syslog(String message) {
+   
+    debugLog(message);
     //Serial.println(message);
 
     //FIXME: не делать в главном потоке! тормозит работу приложения!!!

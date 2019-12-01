@@ -13,8 +13,8 @@ void BluetoothHelper_setup() {
     String name = "Zarya_"+serialNumber;
 
     SerialBT.begin(name); //Bluetooth device name
-    Serial.println("The device started, now you can pair it with bluetooth!");
-    Serial.println("Name of bluetooth: "+name);
+    debugLog("The device started, now you can pair it with bluetooth!");
+    debugLog("Name of bluetooth: "+name);
 }
 
 void BluetoothHelper_loop() {
@@ -33,6 +33,6 @@ void BluetoothHelper_SerialWrite(String inputString) {
         writeString.getBytes(plain, len);
         SerialBT.write(plain,sizeof(plain));
     } else {
-        Serial.println("bluetooth not connected");
+        debugLog("bluetooth not connected");
     }
 }

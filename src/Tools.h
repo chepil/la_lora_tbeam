@@ -8,5 +8,6 @@ void Shutdown(void);
 void setDown(void);
 bool getDown(void);
 
+void debugLog(String message);
 
 #endif /* TOOLS_H */

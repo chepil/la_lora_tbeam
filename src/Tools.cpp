@@ -33,8 +33,8 @@ void SetupSerialNumber() {
   if (showSerialNumber.length() > 6) {
     showSerialNumber.remove(0, showSerialNumber.length()-6);
   }
-  Serial.println("id8 Serial number: "+id8SerialNumber);
-  Serial.println("screen Serial number: "+showSerialNumber);
+  debugLog("id8 Serial number: "+id8SerialNumber);
+  debugLog("screen Serial number: "+showSerialNumber);
 
   setSerialNumber(showSerialNumber);
 }
@@ -60,4 +60,10 @@ void setDown() {
 
 bool getDown() {
   return down;
+}
+
+void debugLog(String message) {
+  if (Serial.availableForWrite()) {
+    Serial.println(message);
+  }
 }
