@@ -11,7 +11,7 @@ String id8SerialNumber = "";
 
 bool down = false;
 
-void Tools_loop();
+void printDebugLog();
 
 std::vector<String> arrayOfDebugLog;
 
@@ -74,10 +74,10 @@ bool getDown() {
 
 void debugLog(String message) {
   arrayOfDebugLog.push_back(message); 
-  Tools_loop();
+  printDebugLog();
 }
 
-void Tools_loop() {
+void printDebugLog() {
   while (!arrayOfDebugLog.empty()) { 
     String message = arrayOfDebugLog[0];
     int sm = sizeof(message);

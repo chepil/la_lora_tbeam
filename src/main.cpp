@@ -83,7 +83,7 @@ void sendlog()
  
 void setup() {
   SPI.begin(SCK,MISO,MOSI,SS);
-  Serial.begin(38400);
+  Serial.begin(115200);
   while (!Serial);
   DisplayHelper_setup();
 

@@ -72,6 +72,10 @@ bool itsTimeToSend() {
   return result;
 }
 
+
+/*
+Создание и отправка пакета, нужно переделать на отправку из очереди
+*/
 void LoraHelper_send_loop() {
 
   if (!itsTimeToSend()) {
@@ -138,6 +142,45 @@ void LoraHelper_send_loop() {
 
     // Each packet can contain up to 255 bytes.
 
+    //1) добавить в очередь пакет, PushToQueueForLoraSend(msg);
+    //2) затем обработать по циклу все подряд
+    uint8_t msg[52];
+    debugLog("===> 1) ");
+    memcpy(&msg, b, sizeof(b));
+    debugLog("===> 2) ");
+    PushToQueueForLoraSend(msg);
+    debugLog("===> 3) ");
+
+    //work with send queue
+    //debugLog("QueueHelper_loop");
+    unsigned int i;
+    int count = 20 - qSendGetRemainingCount();
+    for (i = 0 ; i < count; i++) { //sizeof(tab)/sizeof(Rec) ; i++)
+      //debugLog("queue i: " + String(i, DEC));
+		  //Rec rec;
+      uint8_t msg[52];
+      for (int j = 0; j<52; j++) {
+        msg[j] = 0;
+      }
+      ResultMessage resultMessage = qSendPop();
+      int sum = 0;
+      for (int j = 0; j<52; j++) {
+        sum = sum + resultMessage.msg[j];
+      }
+      if (sum > 0) {
+        debugLog("-=-=-=-=-=-= will send packet ");
+        //need to send (resultMessage.msg);  
+      }
+      /*
+		  if (qSend.pop(msg) == false) {
+        return;
+      }
+      //debugLog("queue parse i: " + String(i, DEC));
+	    parseBuffer(msg);*/
+	  }
+    //end work with send queue
+
+
     LoRa.beginPacket();
 
     //LoRa.print("hello ");
@@ -159,7 +202,7 @@ void LoraHelper_send_loop() {
     
   }
   STOP_RECEIVER = false;
-  debugLog("LoraHelper_send_loop end");
+  //debugLog("LoraHelper_send_loop end");
   
 }
 
@@ -190,7 +233,7 @@ void LoraHelper_receive_loop() {
 }
 
 void cbk(int packetSize) {
-  debugLog("-=-=-=-=-=-=-=-= cbk =-=-=-=-=-=-=-=-=-");
+  //debugLog("-=-=-=-=-=-=-=-= cbk =-=-=-=-=-=-=-=-=-");
   //if (isLisa()) {
   //  return;
   //}
@@ -221,11 +264,11 @@ void cbk(int packetSize) {
   //debugLog("");
 
   //debugLog("PushToQueue");
-  debugLog("-=-=-=-=-=-=-=-= end cbk =-=-=-=-=-=-=-=-=-");
+  //debugLog("-=-=-=-=-=-=-=-= end cbk =-=-=-=-=-=-=-=-=-");
 
   PushToQueue(msg);
     
-  debugLog("-=-=-=-=-=-=-=-= end push to queue =-=-=-=-=-=-=-=-=-");
+  //debugLog("-=-=-=-=-=-=-=-= end push to queue =-=-=-=-=-=-=-=-=-");
 
   return;
 /*
