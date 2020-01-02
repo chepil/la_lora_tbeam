@@ -18,6 +18,7 @@
 #include "AxpHelper.h"
 #include <Thread.h>
 #include <ThreadController.h>
+#include "HttpServerHelper.h"
 
 // ThreadController that will controll all threads
 ThreadController controll = ThreadController();
@@ -111,12 +112,11 @@ void setup() {
   if (isLisa()) {  
     //TODO: send gps coordinates via bluetooth to smartphone 
   } else {
-    BluetoothHelper_setup();
+    //BluetoothHelper_setup();
+    HttpServerHelper_setup();
   }
 
-
   debugLog("init ok");
-
 
   setRxLine("");
 
@@ -142,11 +142,9 @@ void setup() {
   queueHelperThread->setInterval(10000);
   controll.add(queueHelperThread);
 
-
   ntpClientThread->onRun(ntpClientThreadCallback);
   ntpClientThread->setInterval(1000);
   controll.add(ntpClientThread);
-
 
   displayUpdateThread->onRun(displayUpdateThreadCallback);
   displayUpdateThread->setInterval(1000);

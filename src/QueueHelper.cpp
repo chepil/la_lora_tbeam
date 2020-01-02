@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <stdio.h>
 #include <HardwareSerial.h>
+//#include "HttpServerHelper.h"
 
 #include "Time.h"
 #include "Tools.h"
@@ -27,6 +28,9 @@ void parseBuffer(uint8_t msg[]);
 
 Queue q(sizeof(msg), 20, FIFO);	// Instantiate queue for parse messages
 Queue qSend(sizeof(msg), 20, FIFO);	// Instantiate queue for send messages
+
+Queue qHttp(sizeof(msg), 100, FIFO);	// Instantiate queue for parse messages
+
 
 void setFoxCounter(char serial[6], int counter);
 int getFreeFoxIndex();
@@ -233,6 +237,7 @@ void parseBuffer(uint8_t msg[]) {
   debugLog("");
 
   BluetoothHelper_SerialWrite(logString);
+//  HttpServerHelper_AddLog(logString);
 
   DisplayHelper_draw();
 

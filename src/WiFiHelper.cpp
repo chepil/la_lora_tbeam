@@ -20,6 +20,7 @@ void updateTime();
 bool needUpdate = true;
 
 void SetupWiFi() {
+    //WiFi.mode(WIFI_STA);
     WiFi.begin("lora", "o7t4r14RIUj");
 
     int maxwait = 5;
