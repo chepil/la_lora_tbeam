@@ -3,6 +3,7 @@
 
 //#include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include "QueueHelper.h"
 
 AsyncWebServer server(80);
 
@@ -26,10 +27,19 @@ void HttpServerHelper_setup() {
         String message;
         if (request->hasParam(PARAM_MESSAGE)) {
             message = request->getParam(PARAM_MESSAGE)->value();
+
+            if (message == "getHttpLog") {
+                message = getHttpLog();
+            }
+
         } else {
-            message = "No message sent";
+            message = "[{\"msg\":\"Incorrect message param\"}]";
         };
-        request->send(200, "text/plain", "Hello, GET: " + message);
+
+        
+
+
+        request->send(200, "application/json", "" + message);
     });
 
     // Send a POST request to <IP>/post with a form field message set to <message>

@@ -23,13 +23,14 @@ float multiplier2 = 1.5152814573F;
 
 //52 lora packet size
 uint8_t msg[52];
+char chStr[100];
 
 void parseBuffer(uint8_t msg[]);
 
 Queue q(sizeof(msg), 20, FIFO);	// Instantiate queue for parse messages
 Queue qSend(sizeof(msg), 20, FIFO);	// Instantiate queue for send messages
 
-Queue qHttp(sizeof(msg), 100, FIFO);	// Instantiate queue for parse messages
+Queue qHttp(sizeof(chStr), 100, FIFO);	// Instantiate queue for parse messages
 
 
 void setFoxCounter(char serial[6], int counter);
@@ -143,6 +144,37 @@ void QueueHelper_loop() {
   //debugLog("QueueHelper_loop end");
 }
 
+String getHttpLog(void) {
+  String result = "[";
+  unsigned int i;
+  int count = 100 - qHttp.getRemainingCount();
+  debugLog("http queue count: " + String(count, DEC));
+  for (i = 0 ; i < count; i++) { 
+    debugLog("http queue i: " + String(i, DEC));
+		//Rec rec;
+    char msg[100];
+    for (int j = 0; j<100; j++) {
+      msg[j] = 0;
+    }
+		if (qHttp.pop(msg) == false) {
+      debugLog("http queue is empty");
+    } else {
+      //we have msg!
+      //return msg
+      //char chLat[12] = {0};
+      String str = (i<(count-1)) ? "," : "";
+
+      result = result+"{ \"msg\": \""+String(msg)+"\"}"+str;
+
+      debugLog("http queue parse i: " + String(i, DEC)+", result: "+result);
+    }
+	  //parseBuffer(msg);
+	}
+  result = result + "]";
+  return result;
+}
+
+
 int qSendGetRemainingCount() {
   return qSend.getRemainingCount();
 }
@@ -237,6 +269,15 @@ void parseBuffer(uint8_t msg[]) {
   debugLog("");
 
   BluetoothHelper_SerialWrite(logString);
+
+  char chStr[100] = {0};
+  for (int i=0; i<logString.length(); i++) {
+    chStr[i] = logString[i];
+  }
+
+
+  debugLog("qHttp.push(msg)");
+  qHttp.push(chStr);
 //  HttpServerHelper_AddLog(logString);
 
   DisplayHelper_draw();

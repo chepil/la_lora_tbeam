@@ -14,6 +14,8 @@ void PushToQueueForLoraSend(uint8_t msg[]);
 
 int qSendGetRemainingCount(void);
 
+String getHttpLog(void);
+
 struct ResultMessage{
   uint8_t msg[52];
 };
