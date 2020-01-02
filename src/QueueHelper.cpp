@@ -145,7 +145,7 @@ void QueueHelper_loop() {
 }
 
 String getHttpLog(void) {
-  String result = "[";
+  String result = "{\"results\": [";
   unsigned int i;
   int count = 100 - qHttp.getRemainingCount();
   debugLog("http queue count: " + String(count, DEC));
@@ -166,11 +166,11 @@ String getHttpLog(void) {
 
       result = result+"{ \"msg\": \""+String(msg)+"\"}"+str;
 
-      debugLog("http queue parse i: " + String(i, DEC)+", result: "+result);
+      debugLog("http queue parse i: " + String(i, DEC));//+", result: "+result);
     }
 	  //parseBuffer(msg);
 	}
-  result = result + "]";
+  result = result + "]}";
   return result;
 }
 
