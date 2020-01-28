@@ -1,0 +1,151 @@
+<html>
+
+
+<!--  www.oziexplorer2.com/oziapi/oziapi_history.html  , Sun, 13 Aug 2006 23:48:44 GMT -->
+<head>
+<title>OziExplorer API</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+</head>
+
+<body>
+
+<p><big><font color="#0000FF"><strong><big>OziExplorer API History</big></strong></font></big></p>
+
+<p><strong><font color="#0000FF" size="4">Version 1.09</font></strong></p>
+
+<p><b>Fixes</b></p>
+
+<ul>
+  <li>nil</li>
+</ul>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>Added oziSaveWPfile function.</li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.08</font></strong></p>
+
+<p><b>Fixes</b></p>
+
+<ul>
+  <li>nil</li>
+</ul>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>Added a new oziCloseApi function - this function frees up any windows or 
+  data created by the OziAPI dll for its own use, the function should be called 
+  before your own program exits otherwise you may get an error (especially if 
+  running on win 2000).</li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.07</font></strong></p>
+
+<p><b>Fixes</b></p>
+
+<ul>
+  <li>Possible fix to oziConvertLL2Grid function, it was returning the zone 
+  string as a variable on the stack instead of the heap, this may have been 
+  causing the instability when called repeatedly.</li>
+</ul>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>Many functions in the API will now only work with the full purchased 
+  version of OziExplorer.</li>
+  <li>Added Grid to Lat/Lon function (oziConvertGrid2LL).</li>
+  <li>Added get Elevation at Lat/Lon function (oziGetElevation)</li>
+  <li>Added Get map image pixel x,y at Lat/Lon function (oziGetPixelXY).</li>
+  <li>Added save map image function (oziSaveMapImage).</li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.06</font></strong></p>
+
+<p><b>Fixes</b></p>
+
+<ul>
+  <li>The Odometers were not working correctly when attempting to use both 
+  odometers at the same time, fixed.</li>
+</ul>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>nil</li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.05</font></strong></p>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>Some command have been renamed - the old names are not included in the 
+  documentation but are still in the API so existing code will still work.</li>
+  <li>The documentation has been reworked and the commands have been divided 
+  into sections.</li>
+  <li>New commands have been added; see the documentation for the full details<ul>
+  <li>Waypoints<ul>
+  <li>Command to get the Waypoint Number from its name</li>
+  <li>Delete a Waypoint by specifying its name</li>
+  <li>Delete a Waypoint by specifying its number</li>
+</ul>
+
+  </li>
+  <li>Tracks<ul>
+  <li>Create Track Points for any track</li>
+  <li>Modify various track parameters</li>
+  <li>many others - see the documentation</li>
+</ul>
+
+  </li>
+  <li>Maps<ul>
+  <li>Is a position on the map</li>
+  <li>Return the name of the best map for a position</li>
+</ul>
+
+  </li>
+  <li>+ others</li>
+</ul>
+
+  </li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.04</font></strong></p>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>Added oziCreateWPex command</li>
+  <li>Added oziLoadRTEfile command</li>
+  <li>Added oziSaveRTEflag command</li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.03</font></strong></p>
+
+<p><b>Fixes</b></p>
+
+<ul>
+  <li>Fixed a bug with the decimal separator for countries which use a ,</li>
+</ul>
+
+<p><strong><font color="#0000FF" size="4">Version 1.02</font></strong></p>
+
+<p><b>Changes</b></p>
+
+<ul>
+  <li>Added oziFindMapAtPosition command</li>
+  <li>Added oziStartMMserial command</li>
+  <li>Added oziStartMMapi command</li>
+  <li>Added oziSendMMstring command</li>
+  <li>Added oziStopMM command </li>
+</ul>
+<p>These changes require OziExplorer version 3.90.4h2 or later.</p>
+<p>&nbsp;</p>
+</body>
+
+<!--  www.oziexplorer2.com/oziapi/oziapi_history.html  , Sun, 13 Aug 2006 23:48:44 GMT -->
+</html>

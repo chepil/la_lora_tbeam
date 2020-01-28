@@ -1,0 +1,1528 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head><title>OziExplorer API</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+
+<p><big><font color="#0000ff"><strong><big>OziExplorer API</big></strong></font></big></p>
+
+<p><b>Version 1.09</b></p>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#syscmds">System Commands</a>
+  <ul>
+    <li><a href="#oziAPIsetTimeout">Timeout Value</a></li>
+    <li><a href="#oziCloseApi">Closing the API</a></li>
+    <li><a href="#oziGetApiVersion">Get API Version</a></li>
+    <li><a href="#oziGetOziVersion">Get OziExplorer Version</a></li>
+    <li><a href="#oziGetExePath">Get path to OziExplorer EXE file</a></li>
+    <li><a href="#oziCloseProgram">Close OziExplorer</a></li>
+    <li><a href="#oziFindOzi">Check if OziExplorer is running</a></li>
+    <li><a href="#oziRegisterStatus">Check if OziExplorer is Registered (purchased)</a></li>
+  </ul>
+</li>
+<li><a href="#gencmds">General Commands</a>
+  <ul>
+    <li><a href="#oziRefreshMap">Redraw the map screen</a></li>
+    <li><a href="#oziGetMapFilePath">Get Map File path</a></li>
+    <li><a href="#oziGetMapDatum">Get datum of loaded map</a></li>
+    <li><a href="#oziConvertDatum">Convert between datums</a></li>
+    <li><a href="#oziConvertLL2Grid">Convert Lat/Lon position to grid position</a></li>
+    <li><a href="#oziConvertGrid2LL">Convert grid position to Lat/Lon position</a></li>
+    <li><a href="#oziGetElevation">Get elevation at position</a></li>
+    <li><a href="#oziGetPixelXY">Get map image location for position</a></li>
+  </ul>
+</li>
+<li><a href="#cbcmds">Callback Commands</a>
+  <ul>
+    <li><a href="#oziMapSingleClickON">Enable procedure for single map clicks</a></li>
+    <li><a href="#oziMapSingleClickOFF">Disable single map click intercept</a></li>
+    <li><a href="#oziMapDblClickON">Enable procedure for double map clicks</a></li>
+    <li><a href="#oziMapDblClickOFF">Disable double map click intercept</a></li>
+    <li><a href="#oziObjectClickON">Enable procedure for map object clicks</a></li>
+    <li><a href="#oziObjectClickOFF">Disable map object click intercept</a></li>
+  </ul>
+</li>
+<li><a href="#mapcmds">Map Commands</a>
+  <ul>
+    <li><a href="#oziLoadMap">Load map</a></li>
+    <li><a href="#oziSaveMap">Save map</a></li>
+    <li><a href="#oziSaveMapFlag">Toggle map saved flag</a></li>
+    <li><a href="#oziFindMapAtPosition">Find map at position</a></li>
+    <li><a href="#oziCenterMapAtPosition">Center map at position</a></li>
+    <li><a href="#oziCenterMapAtPositionWithMark">Center map at position, with mark</a></li>
+    <li><a href="#oziIsPositionOnMap">Check if position on map</a></li>
+    <li><a href="#oziFindBestMap">Find best map for position</a></li>
+    <li><a href="#oziSaveMapImage">Save map image</a></li>
+  </ul>
+</li>
+<li><a href="#wptcmds">Waypoint Commands</a>
+  <ul>
+    <li><a href="#oziGetWpNumberFromName">Get waypoint number for name</a></li>
+    <li><a href="#oziDeleteWpByName">Delete waypoint by name</a></li>
+    <li><a href="#oziDeleteWpByNumber">Delete waypoint by number</a></li>
+    <li><a href="#oziClearWPs">Clear all waypoints</a></li>
+    <li><a href="#oziCreateWPex">Create waypoint(extended)</a></li>
+    <li><a href="#oziCreateWP">Create waypoint</a></li>
+    <li><a href="#oziLoadWPfile">Load waypoint file</a></li>
+    <li><a href="#oziSaveWPfile">Save waypoint file</a></li>
+    <li><a href="#oziSaveWPflag">Toggle waypoints saved flag</a></li>
+    <li><a href="#oziRepositionWP">Reposition waypoint</a></li>
+  </ul>
+</li>
+<li><a href="#rtecmds">Route Commands</a>
+  <ul>
+    <li><a href="#oziClearRTEs">Clear all routes</a></li>
+    <li><a href="#oziSaveRTEflag">Toggle routes saved flag</a></li>
+    <li><a href="#oziLoadRTEfile">Load route file</a></li>
+  </ul>
+</li>
+<li><a href="#pntcmds">Point Commands</a>
+  <ul>
+    <li><a href="#oziSavePTflag">Toggle points saved flag</a></li>
+    <li><a href="#oziClearPTs">Clear all points</a></li>
+    <li><a href="#oziLoadPTfile">Load point file</a></li>
+  </ul>
+</li>
+<li><a href="#evtcmds">Event Commands</a>
+  <ul>
+    <li><a href="#oziClearEVs">Clear all events</a></li>
+  </ul>
+</li>
+<li><a href="#trkcmds">Track Commands</a>
+  <ul>
+    <li><a href="#oziClearAllTracks">Clear all tracks</a></li>
+    <li><a href="#oziClearTrack">Clear a track</a></li>
+    <li><a href="#oziShowAllTracks">Show all tracks</a></li>
+    <li><a href="#oziHideAllTracks">Hide all tracks</a></li>
+    <li><a href="#oziShowTrack">Show a track</a></li>
+    <li><a href="#oziHideTrack">Hide a track</a></li>
+    <li><a href="#oziCreateTrackPoint">Create track point</a></li>
+    <li><a href="#oziSetTrackDescription">Set track description</a></li>
+    <li><a href="#oziSetTrackType">Set track type</a></li>
+    <li><a href="#oziSetTrackWidth">Set track width</a></li>
+    <li><a href="#oziSetTrackColor">Set track color</a></li>
+    <li><a href="#oziLoadTrackFile">Load track file</a></li>
+    <li><a href="#oziSaveTrackFile">Save track file</a></li>
+    <li><a href="#oziSaveTrackFlag">Toggle track saved flag</a></li>
+  </ul>
+</li>
+<li><a href="#mfcmds">Map Feature Commands</a>
+  <ul>
+    <li><a href="#oziClearMFs">Clear all map features</a></li>
+    <li><a href="#oziCreateMF">Create map feature</a></li>
+    <li><a href="#oziDeleteMfByNumber">Delete map feature by number</a></li>
+    <li><a href="#oziRepositionMF">Reposition map feature</a></li>
+  </ul>
+</li>
+<li><a href="#mccmds">Map Comment Commands</a>
+  <ul>
+    <li><a href="#oziClearMCs">Clear all map comments</a></li>
+    <li><a href="#oziCreateMC">Create map comment</a></li>
+    <li><a href="#oziDeleteMcByNumber">Delete map comment by number</a></li>
+    <li><a href="#oziRepositionMC">Reposition map comment</a></li>
+  </ul>
+</li>
+<li><a href="#mmcmds">Moving Map Commands</a>
+  <ul>
+    <li><a href="#oziStartMMserial">Start moving map(serial)</a></li>
+    <li><a href="#oziStartMMapi">Start moving map(api)</a></li>
+    <li><a href="#oziSendMMstring">Send NMEA strings</a></li>
+    <li><a href="#oziStopMM">Stop moving map</a></li>
+    <li><a href="#oziSendMMpositionON">Enable procedure for moving map data</a></li>
+    <li><a href="#oziSendMMpositionOFF">Disable moving map data intercept</a></li>
+    <li><a href="#oziGps2NavWp">Get navigation data</a></li>
+  </ul>
+</li>
+<li><a href="#oedcmds">Oedometer Commands</a>
+  <ul>
+    <li><a href="#oziOedometer1ON">Enable oedometer 1</a></li>
+    <li><a href="#oziOedometer1OFF">Disable oedometer 1</a></li>
+    <li><a href="#oziOedometer1Reset">Reset oedometer 1</a></li>
+    <li><a href="#oziOedometer1Set">Set oedometer 1</a></li>
+    <li><a href="#oziOedometer1UP">Oedometer 1 increments</a></li>
+    <li><a href="#oziOedometer1DOWN">Oedometer 1 decrements</a></li>
+    <li><a href="#Oedometer2">Oedometer 2</a></li>
+  </ul>
+</li>
+<li><a href="#calling">API calling conventions</a>
+  <ul>
+    <li><a href="#datefmt">Date Format</a></li>
+    <li><a href="#pansichar">pansichar data type</a></li>
+    <li><a href="#pchar">pchar data type</a></li>
+    <li><a href="#integer">integer data type</a></li>
+    <li><a href="#double">double data type</a></li>
+    <li><a href="#boolean">boolean data type</a></li>
+  </ul>
+</li>
+</ul>
+
+<hr size="5">
+<a name="overview"></a>
+<p><font color="#0000ff"><strong><big>Overview</big></strong></font></p>
+
+<hr size="5">
+
+<p>The OziExplorer API provides an interface which can be used to control the 
+OziExplorer software.</p>
+
+<p>The OziExplorer API provides a DLL which contains many functions which can be 
+called by a user written program. The DLL then passes these commands to the 
+OziExplorer software which reacts to the command.</p>
+
+<p>This document provides the details of the function calls that are available in the OziExplorer API</p>
+
+<p>To use the API the DLL <strong>OziAPI.dll</strong> must be available in the default
+folder of the application you write or a folder on the windows search path.</p>
+
+<p>The <strong>OziAPI.dll</strong> requires OziExplorer version <strong>3.90.4g</strong> 
+or better - many functions will require a later version so it is always 
+advisable to make sure you have the latest version of OziExplorer, these are 
+indicated with the function description.</p>
+
+<p>The functions return 
+
+</p><ul>
+  <li>-1 if no response from OziExplorer within 5 seconds if OziExplorer is running, or
+    instantly if OziExplorer is not running. The 5sec timeout value can be adjusted.</li>
+  <li>0 if OziExplorer has reacted to the command. This does not always mean the command
+    completed successfully, just that OziExplorer has tried to do it.</li>
+  <li>Other values as indicated with each function detail</li>
+</ul>
+
+<p><strong>Note that this is a controlling interface, it subject to the following
+limitations.</strong></p>
+
+<p>OziExplorer will react to the command when it is able, this is usually instantly but it
+may take a few moments if it is busy.</p>
+
+<p>OziExplorer will attempt to carry out the command but there may be reasons why the
+command could not be completed, it is not always possible to report this. The controlling
+program using the API should do as much checking as it can before sending the command.
+Example - if loading a map check that the .map file exists before sending the command.</p>
+
+<p><strong>Notes</strong></p>
+
+<p>In many commands the Data Length of the "string" (char) data is returned. The
+data length in not usually required as the strings returned are zero delimited and
+standard string handling functions can be used.</p>
+
+<p>Any strings returned from the API dll are stored in temporary buffers which get reused.
+The application program should make a copy of any string variables returned as the same
+buffers may be used for subsequent API calls.</p>
+
+<p>Many functions in the API will only work with the full purchased version of 
+OziExplorer.</p>
+
+<hr size="5">
+<a name="syscmds"></a>
+<p><font color="#0000ff"><strong><big>System Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziAPIsetTimeout"></a>
+<p><font color="#ff0000"><big><strong>Timeout Value</strong></big></font></p>
+
+<p><strong>function oziAPIsetTimeout(timeout:integer):integer;stdcall;</strong></p>
+
+<p>This sets the timeout value (in milliseconds) (The DLL defaults to 5000 msec).</p>
+
+<p>This is the length of time the API waits before it returns if it has not received
+acknowledgement of the command from OziExplorer, the acknowledgement is sent after the
+command has been done. This can cause your software to appear to freeze as it waits.</p>
+
+<p>In some cases a long timeout is not required, it is suggested the timeout be set to a
+small value (say 200 msec).</p>
+
+<p>Example - checking if OziExplorer is running using the <a href="#oziFindOzi">oziFindOzi</a> function
+does not require a long timeout.</p>
+
+<hr size="5">
+<a name="oziCloseApi"></a>
+<p><font color="#ff0000" size="4"><b>Closing the API</b></font></p>
+
+<p><strong>function oziCloseApi:integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.08</p>
+
+<p>Frees up any windows or data the dll has created for its own use.</p>
+
+<p>The function should be called before your own program exits otherwise you may 
+get an error (especially if running on win 2000).</p>
+
+<p>If programming in Delphi you could place the call in the Destroy method of 
+your main form.</p>
+
+<hr size="5">
+<a name="oziGetApiVersion"></a>
+<p><font color="#ff0000"><big><strong>Get API Version</strong></big></font></p>
+
+<p><strong>function oziGetApiVersion(var Version:pansichar;var
+DataLength:integer):integer;stdcall;</strong></p>
+
+<p>The version of the API is returned in the Version variable.</p>
+
+<hr size="5">
+<a name="oziGetOziVersion"></a>
+<p><font color="#ff0000"><big><strong>Get OziExplorer Version</strong></big></font></p>
+
+<p><strong>function oziGetOziVersion(var Version:pansichar;var
+DataLength:integer):integer;stdcall;</strong></p>
+
+<p>The version of OziExplorer is returned in the Version variable.</p>
+
+<hr size="5">
+<a name="oziGetExePath"></a>
+<p><font color="#ff0000"><big><strong>Get path to OziExplorer EXE file</strong></big></font></p>
+
+<p><strong>function oziGetExePath(var Path:pansichar;var
+DataLength:integer):integer;stdcall;</strong></p>
+
+<p>The path of the OziExplorer exe file (oziexp.exe) is returned in the Path variable.</p>
+
+<hr size="5">
+<a name="oziCloseProgram"></a>
+<p><font color="#ff0000"><big><strong>Close OziExplorer</strong></big></font></p>
+
+<p><strong>function oziCloseProgram:integer;stdcall;</strong></p>
+
+<p>Closes OziExplorer.</p>
+
+<hr size="5">
+<a name="oziFindOzi"></a>
+<p><font color="#ff0000"><big><strong>Check if OziExplorer is running</strong></big></font></p>
+
+<p><strong>function oziFindOzi:integer;stdcall;</strong></p>
+
+<p>If OziExplorer is running the function returns 0 otherwise it returns -1</p>
+
+<hr size="5">
+<a name="oziRegisterStatus"></a>
+<p><font color="#ff0000"><big><strong>Check if OziExplorer is Registered 
+(purchased)</strong></big></font></p>
+
+<p><strong>function oziRegisterStatus:integer;stdcall;</strong></p>
+
+<p>Checks the Registration Status of OziExplorer</p>
+
+<p>The function returns</p>
+
+<p>Shareware version - 0<br>
+Trial version - 1<br>
+Registered (purchased) - 2 </p>
+
+<hr size="5">
+<a name="gencmds"></a>
+<p><font color="#0000ff"><strong><big>General Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziRefreshMap"></a>
+<p><font color="#ff0000"><big><strong>Redraw the map screen</strong></big></font></p>
+
+<p><strong>function oziRefreshMap:integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+<p>Will redraw the map screen in OziExplorer.</p>
+<p>Some commands require that you call the oziRefreshmap command so OziExplorer 
+will redraw the map to display the changed data.</p>
+<p>Example - if you add a track point the new point will not be drawn unless you 
+call the oziRefreshMap command.</p>
+
+<hr size="5">
+<a name="oziGetMapFilePath"></a>
+<p><font color="#ff0000"><big><strong>Get Map File path</strong></big></font></p>
+
+<p><strong>function oziGetMapFilePath(var MapFilePath:pansichar):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+<p>Returns the Map File path setting in OziExplorer.</p>
+<p>Useful if you want to use the <a href="#oziFindBestMap">oziFindBestMap</a> command and want to search the
+Map File Path.</p>
+
+<hr size="5">
+<a name="oziGetMapDatum"></a>
+<p><font color="#ff0000"><big><strong>Get datum of loaded map</strong></big></font></p>
+
+<p><strong>function oziGetMapDatum(var Datum:pansichar;var
+DataLength:integer):integer;stdcall;</strong></p>
+
+<p>Returns the Datum of the currently loaded map in the Datum variable.</p>
+
+<hr size="5">
+<a name="oziConvertDatum"></a>
+<p><font color="#ff0000"><big><strong>Convert between datums</strong></big></font></p>
+
+<p><strong>function oziConvertDatum(var DatumFrom:pchar; var DatumTo:pchar; var
+lat:double; var lon:double):integer;stdcall;</strong></p>
+
+<p>Converts the position from the Datum specified in DatumFrom to the Datum specified in
+DatumTo.</p>
+
+<p>The position is sent in the lat,lon variables and the converted position is returned in
+the lat,lon variables.</p>
+
+<p>The datum names must be from the list of Datums in OziExplorer (althought not case
+sensitive).</p>
+
+<hr size="5">
+<a name="oziConvertLL2Grid"></a>
+<p><font color="#ff0000"><big><strong>Convert Lat/Lon position to grid position</strong></big></font></p>
+
+<p><strong>function oziConvertLL2Grid(GridNumber:integer;lat,lon:double;var
+Datum:pchar;var Zone:pchar; var Easting,Northing:double;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Lat0,Lon0,Lat1,Lat2,K0,X0,Y0:double):integer;stdcall;</strong></p>
+
+<p>;the grid is a number from the list below.<br>
+<br>
+;1=UTM Grid<br>
+;2=Transverse Mercator (user grid)<br>
+;3=British National grid (BNG,OSGB)<br>
+;4=Irish Grid<br>
+;5=New Zealand Grid<br>
+;6=Swedish Grid<br>
+;7=Swiss Grid<br>
+;8=France I<br>
+;9=France II<br>
+;10=France III<br>
+;11=France IV<br>
+;12=Italy 1 Grid<br>
+;13=Italy 2 Grid<br>
+;14=Vicmap TM Grid</p>
+
+<p>These parameters are only required for map projections and the Transverse 
+Mercator User Grid.</p>
+
+<ul>
+  <li>Lat0 - Latitude of Origin</li>
+  <li>Lon0 - Longitude Origin (Central Meridian)</li>
+  <li>Lat1, Lat2 - latitude 1 and 2 for Lambert Conformal Conic</li>
+  <li>K0 - K factor</li>
+  <li>X0 - false easting</li>
+  <li>Y0 - false northing</li>
+</ul>
+<p><b>Returned</b></p>
+<ul>
+  <li>Zone - only if it applies to the selected grid</li>
+  <li>Easting and Northing</li>
+</ul>
+
+<hr size="5">
+<a name="oziConvertGrid2LL"></a>
+<p><font color="#ff0000"><big><strong>Convert grid position to Lat/Lon position</strong></big></font></p>
+
+<p><strong>function oziConvertGrid2LL(GridNumber:integer;var Zone:pchar;var ns:pchar;
+Easting,Northing:double;var Datum:pchar;var lat,lon:double;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+lat0,Lon0,lat1,Lat2,K0,X0,Y0:double):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.07 <br>
+OziExplorer - 3.95.3e</p>
+<p>For the grid numbers to use and map projection parameters see the 
+<a href="#oziConvertLL2Grid">oziConvertLL2Grid</a> function description above</p>
+<p>Zone - the Zone number, for UTM the zone letter need not be included.<br>
+ns - for the UTM grid only, N = northern hemisphere, S = southern hemisphere, 
+can be left as null ("") if the utm zone letter is included withthe zone.</p>
+<p><b>Returned</b></p>
+<ul>
+  <li>latitude and longitude</li>
+</ul>
+
+<hr size="5">
+<a name="oziGetElevation"></a>
+<p><font color="#ff0000"><big><strong>Get elevation at position</strong></big></font></p>
+
+<p><strong>function oziGetElevation(lat,lon:double;var Elevation:double;var
+FileName:pansichar;var resolution:pansichar):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.07 <br>
+OziExplorer - 3.95.3e</p>
+
+<p>Parameters</p>
+
+<p>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)<br>
+<br>
+Returns</p>
+
+<p>Elevation - the elevation in meters<br>
+Filename - the name of the height data file the elevation was extracted from<br>
+resolution - the resolution (grid spacing) of the height data as a string</p>
+
+<hr size="5">
+<a name="oziGetPixelXY"></a>
+<p><font color="#ff0000"><big><strong>Get map image location for position</strong></big></font></p>
+
+<p><strong>function oziGetPixelXY(lat,lon:double;var x,y:integer):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.07 <br>
+OziExplorer - 3.95.3e</p>
+
+<p>Parameters</p>
+
+<p>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)</p>
+
+<p>Returns</p>
+
+<p>x,y - pixel position representing the lat,lon coordinates</p>
+
+<hr size="5">
+<a name="cbcmds"></a>
+<p><font color="#0000ff"><strong><big>Callback Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziMapSingleClickON"></a>
+<p><font color="#ff0000"><big><strong>Enable procedure for single map clicks</strong></big></font></p>
+
+<p><strong>function oziMapSingleClickON(p:TMapSingleClickCallback):integer;stdcall;</strong></p>
+
+<p>When turned ON OziExplorer will return the <strong>single map clicks</strong> by
+calling the procedure which has its address specified in the p variable. This must be a
+procedure defined as below.</p>
+
+<p>The Callback Procedure</p>
+
+<p><strong>procedure MapSingleClickCallback(var oType:pchar; x,y:integer;
+Lat,Lon:double;var UTMZone:pchar; easting,northing:double);stdcall;</strong> 
+
+</p><ul>
+  <li>oType - the type of click as a string ("map_click")</li>
+  <li>x,y - the pixel coordinates of the click</li>
+  <li>Lat, Lon - the Lat/Lon position of the click</li>
+  <li>UTMZone - The UTM zone as a string</li>
+  <li>easting, northing - The UTM Easting and Northing</li>
+</ul>
+
+<hr size="5">
+<a name="oziMapSingleClickOFF"></a>
+<p><font color="#ff0000"><big><strong>Disable single map click intercept</strong></big></font></p>
+
+<p><strong>function oziMapSingleClickOFF:integer;stdcall;</strong></p>
+
+<p>Turns off the single click </p>
+
+<hr size="5">
+<a name="oziMapDblClickON"></a>
+<p><font color="#ff0000"><big><strong>Enable procedure for double map clicks</strong></big></font></p>
+
+<p><strong>function oziMapDblClickON(p:TMapDblClickCallback):integer;stdcall;</strong></p>
+
+<p>When turned ON OziExplorer will return the <strong>double map clicks</strong> by
+calling the procedure which has its address specified in the p variable. This must be a
+procedure defined as below.</p>
+
+<p>The Callback Procedure</p>
+
+<p><strong>procedure MapDblClickCallback(var oType:pchar; x,y:integer; Lat,Lon:double;var
+UTMZone:pchar; easting,northing:double);stdcall;</strong> 
+
+</p><ul>
+  <li>oType - the type of click as a string ("map_dblclick")</li>
+  <li>x,y - the pixel coordinates of the click</li>
+  <li>Lat, Lon - the Lat/Lon position of the click</li>
+  <li>UTMZone - The UTM zone as a string</li>
+  <li>easting, northing - The UTM Easting and Northing</li>
+</ul>
+
+<hr size="5">
+<a name="oziMapDblClickOFF"></a>
+<p><font color="#ff0000"><big><strong>Disable double map click intercept</strong></big></font></p>
+
+<p><strong>function oziMapDblClickOFF:integer;stdcall;</strong></p>
+
+<p>Turns off the double click.</p>
+
+<hr size="5">
+<a name="oziObjectClickON"></a>
+<p><font color="#ff0000"><big><strong>Enable procedure for map object clicks</strong></big></font></p>
+
+<p><strong>function oziObjectClickON(p:TObjectClickCallback):integer;stdcall;</strong></p>
+
+<p>When turned ON OziExplorer will return the <strong>Object map clicks</strong> by
+calling the procedure which has its address specified in the p variable. This must be a
+procedure defined as below.</p>
+
+<p>The Callback Procedure</p>
+
+<p><strong>procedure(var oType:pchar;&nbsp; Lat,Lon:double;var UTMZone:pchar;
+easting,northing:double; var sName:pchar);stdcall;</strong> 
+
+</p><ul>
+  <li>oType - the type of click as a string<br>
+    waypoint = "wp_click" ; event = "ev_click" ; map feature =
+    "mf_click" ; map comment = "mc_click"<br>
+    active trackpoint = "tp_click" ; active point = "pp_click"</li>
+  <li>x,y - the pixel coordinates of the click</li>
+  <li>Lat, Lon - the Lat/Lon position of the click</li>
+  <li>UTMZone - The UTM zone as a string</li>
+  <li>easting, northing - The UTM Easting and Northing</li>
+  <li>sName - the name of the specific object, not all objects return a name (for these the
+    string will be empty).</li>
+</ul>
+
+<hr size="5">
+<a name="oziObjectClickOFF"></a>
+<p><font color="#ff0000"><big><strong>Disable map object click intercept</strong></big></font></p>
+
+<p><strong>function oziObjectClickOFF:integer;stdcall;</strong></p>
+
+<p>Turns off the Object click.</p>
+
+<hr size="5">
+<a name="mapcmds"></a>
+<p><font color="#0000ff"><strong><big>Map Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziLoadMap"></a>
+<p><font color="#ff0000"><big><strong>Load Map</strong></big></font></p>
+
+<p><strong>function oziLoadMap(var MapName:pansichar):integer;stdcall;</strong></p>
+
+<p>Loads a map file </p>
+
+<p>Specify the full path and name of the file.</p>
+
+<hr size="5">
+<a name="oziSaveMap"></a>
+<p><font color="#ff0000"><big><strong>Save map</strong></big></font></p>
+
+<p><strong>function oziSaveMap(var MapName:pansichar):integer;stdcall;</strong></p>
+
+<p>Saves a map file</p>
+
+<p>If the MapName is empty the map file is saved using its current name</p>
+
+<p>If the MapName is not empty the map file is saved using the specified name.</p>
+
+<hr size="5">
+<a name="oziSaveMapFlag"></a>
+<p><font color="#ff0000"><big><strong>Toggle map saved flag</strong></big></font></p>
+
+<p><strong>function oziSaveMapFlag(Flag:boolean):integer;stdcall;</strong></p>
+
+<p>If Flag is true then the map loaded into OziExplorer is assumed to be saved 
+and the user will not be prompted to save it when a new map is loaded or 
+OziExplorer is closed.</p>
+
+<hr size="5">
+<a name="oziFindMapAtPosition"></a>
+<p><font color="#ff0000"><big><strong>Find map at position</strong></big></font></p>
+
+<p><strong>function oziFindMapAtPosition(Lat,Lon:double):integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4h2 or later</p>
+
+<p>The available maps will be scanned and a list of maps presented for 
+selection (within OziExplorer), the map will be centered on the specified position and a mark added 
+at the position (a bullseye).</p>
+
+<hr size="5">
+<a name="oziCenterMapAtPosition"></a>
+<p><font color="#ff0000"><big><strong>Center map at position</strong></big></font></p>
+
+<p><strong>function oziCenterMapAtPosition(Lat,Lon:double):integer;stdcall;</strong></p>
+
+<p>The map will be centered at the specified position.</p>
+
+<hr size="5">
+<a name="oziCenterMapAtPositionWithMark"></a>
+<p><font color="#ff0000"><big><strong>Center map at position, with mark</strong></big></font></p>
+
+<p><strong>function oziCenterMapAtPositionWithMark(Lat,Lon:double):integer;stdcall;</strong></p>
+
+<p>The map will be centered at the specified position and a mark added at the position (a
+bullseye).</p>
+
+<hr size="5">
+<a name="oziIsPositionOnMap"></a>
+<p><font color="#ff0000"><big><strong>Check if position on map</strong></big></font></p>
+
+<p><strong>function oziIsPositionOnMap(lat,lon:double):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+<p>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)</p>
+<p>Returns 1 if the position is on the current map 0 if it is not on the map.</p>
+
+<p>Useful to create a moving map in OziExplorer without using the OziExplorer 
+built in moving map function.</p>
+
+<hr size="5">
+<a name="oziFindBestMap"></a>
+<p><font color="#ff0000"><big><strong>Find best map for position</strong></big></font></p>
+
+<p><strong>function oziFindBestMap(lat,lon:double;SubFolders:integer;var
+MapPath:pansichar;var MapFile:pansichar):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+<p>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)<br>
+<b>SubFolders</b> - 0 = do not search subfolders ; 1=search subfolders<br>
+<b>MapPath</b> - the path to search, use the <a href="#oziGetMapFilePath">oziGetMapFilePath</a> command if you
+want the Map File path setting.<br>
+<b>MapFile</b> - the name of the best map is returned in this variable</p>
+<p>Will return the best (most detailed) map it finds which matches the lat,lon 
+position. </p>
+
+<p>Useful to create a moving map in OziExplorer without using the OziExplorer 
+built in moving map function.</p>
+
+<hr size="5">
+<a name="oziSaveMapImage"></a>
+<p><font color="#ff0000"><big><strong>Save map image</strong></big></font></p>
+
+<p><strong>function oziSaveMapImage(FileName:pansichar):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.07 <br>
+OziExplorer - 3.95.3e</p>
+
+<p>Parameters</p>
+
+<p>FileName - the name of the file to save the map image to (.png or .bmp 
+extensions can be used).</p>
+
+<p>Note - some licensed image formats cannot be saved.</p>
+
+<hr size="5">
+<a name="wptcmds"></a>
+<p><font color="#0000ff"><strong><big>Waypoint Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziGetWpNumberFromName"></a>
+<p><font color="#ff0000"><big><strong>Get waypoint number for name</strong></big></font></p>
+
+<p><strong>function oziGetWpNumberFromName(var name:pansichar):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p><b>name</b> - the waypoint name</p>
+
+<p>Will return the first waypoint number which matches the name.</p>
+
+<p>0 = name not found</p>
+
+<hr size="5">
+<a name="oziDeleteWpByName"></a>
+<p><font color="#ff0000"><big><strong>Delete waypoint by name</strong></big></font></p>
+
+<p><strong>function oziDeleteWpByName(var name:pansichar):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will delete the first waypoint it finds with the specified name.</p>
+
+<hr size="5">
+<a name="oziDeleteWpByNumber"></a>
+<p><font color="#ff0000"><big><strong>Delete waypoint by number</strong></big></font></p>
+
+<p><strong>function oziDeleteWpByNumber(wpNum:integer):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will delete the specified waypoint.</p>
+
+<p>Caution - Since Version 3.95.4 of OziExplorer waypoint numbers will not 
+remain constant, as waypoints are deleted OziExplorer changes the numbers for 
+waypoints as it removes the space from the internal memory array of waypoints. 
+The best option is not to use this function at all, use the oziDeleteWpByName 
+function.</p>
+
+<hr size="5">
+<a name="oziClearWPs"></a>
+<p><font color="#ff0000"><big><strong>Clear all waypoints</strong></big></font></p>
+
+<p><strong>function oziClearWPs:integer;stdcall;</strong></p>
+
+<p>Will clear all Waypoints from the map.</p>
+
+<hr size="5">
+<a name="oziCreateWPex"></a>
+<p><font color="#ff0000"><big><strong>Create waypoint(extended)</strong></big></font></p>
+
+<p><strong>function oziCreateWPex(var 
+Name:pchar;Symbol:integer;lat,lon:double;Altitude:double;wpDate:double<br>
+;MapDisplayFormat:integer;PointerDirection:integer;GarminDisplayFormat:integer<br>
+;ForeColor,BackColor:integer;ProximityDistance:integer;var Description:pchar<br>
+;FontSize:integer;FontStyle:integer;SymbolSize:integer<br>
+;ProximitySymbolPos:integer;ProximityTime:double;ProximityRoute:integer<br>
+;var FileAttachmentName:pchar;var ProximityFileAttachmentName:pchar<br>
+;var ProximitySymbolName:pchar ):integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4j or later</p>
+
+<p>Creates a waypoint at the specified position with the specified parameters.</p>
+
+<p>The return value is the internal OziExplorer number of the Waypoint created. 
+This number may need to be stored locally if the Waypoint is to be manipulated 
+later in your program.</p>
+
+<p>For most parameters a value of -1 can be specified, this means use the OziExplorer
+default, <br>
+The ** indicates that the above option applies for the field.</p>
+
+<p><strong>Name</strong> - the name of the waypoint<br>
+<strong>Symbol</strong> - the symbol number ; **<br>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)<br>
+<strong>Altitude</strong> - in meters (-777 = altitude unknown)<br>
+<strong>wpDate</strong> - the format of the date is at the end of this document ; -1 = use
+todays date and time.<br>
+<strong>MapDisplayFormat</strong> - 0 to 8 ; **<br>
+<strong>PointerDirection</strong> - 0 to 3 ; **<br>
+<strong>GarminDisplayFormat</strong> - 0 to 2 ; **<br>
+<strong>ForeColor</strong> - RGB color ; **<br>
+<strong>BackColor</strong> - RGB color ; **<br>
+P<strong>roximityDistance</strong> - in meters (0 = no proximity)<br>
+<strong>Description</strong> - text string<br>
+<strong>FontSize</strong> - in points ; **<br>
+<strong>FontStyle</strong> - 0 = normal ; 1 = bold ; **<br>
+<strong>SymbolSize</strong> - 17 = normal ; **<strong><br>
+ProximitySymbolPos -</strong> 0 to 7, 0 = top left<strong><br>
+ProximityTime -</strong> time in seconds<strong><br>
+ProximityRoute -</strong> 0 = proximity, 1 = route, 2 = proximity and route
+<strong><br>
+FileAttachmentName -</strong> file name with path.<strong><br>
+ProximityFileAttachmentName -</strong> file name with path.<strong><br>
+ProximitySymbolName -</strong> file name with path.</p>
+
+<hr size="5">
+<a name="oziCreateWP"></a>
+<p><font color="#ff0000"><big><strong>Create waypoint</strong></big></font></p>
+
+<p><strong>function oziCreateWP(var
+Name:pchar;Symbol:integer;lat,lon:double;Altitude:double;wpDate:double
+;MapDisplayFormat:integer;PointerDirection:integer;GarminDisplayFormat:integer<br>
+;ForeColor,BackColor:integer;ProximityDistance:integer;var Description:pchar<br>
+;FontSize:integer;FontStyle:integer;SymbolSize:integer):integer;stdcall;</strong></p>
+
+<p>Also see <a href="#oziCreateWPex">oziCreateWPex</a> above.</p>
+
+<p>Creates a waypoint at the specified position with the specified parameters.</p>
+
+<p>The return value is the internal OziExplorer number of the Waypoint created. 
+This number may need to be stored locally if the Waypoint is to be manipulated 
+later in your program.</p>
+
+<p>For most parameters a value of -1 can be specified, this means use the OziExplorer
+default, <br>
+The ** indicates that the above option applies for the field.</p>
+
+<p><strong>Name</strong> - the name of the waypoint<br>
+<strong>Symbol</strong> - the symbol number ; **<br>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)<br>
+<strong>Altitude</strong> - in meters (-777 = altitude unknown)<br>
+<strong>wpDate</strong> - the format of the date is at the end of this document ; -1 = use
+todays date and time.<br>
+<strong>MapDisplayFormat</strong> - 0 to 8 ; **<br>
+<strong>PointerDirection</strong> - 0 to 3 ; **<br>
+<strong>GarminDisplayFormat</strong> - 0 to 2 ; **<br>
+<strong>ForeColor</strong> - RGB color ; **<br>
+<strong>BackColor</strong> - RGB color ; **<br>
+P<strong>roximityDistance</strong> - in meters (0 = no proximity)<br>
+<strong>Description</strong> - text string<br>
+<strong>FontSize</strong> - in points ; **<br>
+<strong>FontStyle</strong> - 0 = normal ; 1 = bold ; **<br>
+<strong>SymbolSize</strong> - 17 = normal ; **</p>
+
+<hr size="5">
+<a name="oziLoadWPfile"></a>
+<p><font color="#ff0000"><big><strong>Load waypoint file</strong></big></font></p>
+
+<p><strong>function oziLoadWPfile(var FileName:pansichar):integer;stdcall;</strong></p>
+
+<p>Loads a waypoint file.</p>
+
+<p>Specify the full path and name of the file.</p>
+
+<hr size="5">
+<a name="oziSaveWPfile"></a>
+<p><font color="#ff0000"><big><strong>Save waypoint file</strong></big></font></p>
+
+<p><strong>function oziSaveWPfile(var FileName:pansichar):integer;stdcall;</strong></p>
+
+<p>Saves a waypoint file.</p>
+
+<p>Specify the full path and name of the file.</p>
+
+<hr size="5">
+<a name="oziSaveWPflag"></a>
+<p><font color="#ff0000"><big><strong>Toggle waypoints saved flag</strong></big></font></p>
+
+<p><strong>function oziSaveWPflag(Flag:boolean):integer;stdcall;</strong></p>
+
+<p>If Flag is true then the waypoints loaded into OziExplorer are assumed to be 
+saved and the user will not be prompted to save it when a new waypoint file is 
+loaded or OziExplorer is closed.</p>
+
+<hr size="5">
+<a name="oziRepositionWP"></a>
+<p><font color="#ff0000"><big><strong>Reposition waypoint</strong></big></font></p>
+
+<p><strong>function oziRepositionWP(Number:integer;lat,lon:double):integer;stdcall;</strong></p>
+
+<p>The waypoint pointed to by the specified number is repositioned to the 
+specified position. </p>
+
+<p>The waypoint number is returned when a new waypoint is created via the API.</p>
+
+<hr size="5">
+<a name="rtecmds"></a>
+<p><font color="#0000ff"><strong><big>Route Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziClearRTEs"></a>
+<p><font color="#ff0000"><big><strong>Clear all routes</strong></big></font></p>
+
+<p><strong>function oziClearRTEs:integer;stdcall;</strong></p>
+
+<p>Will clear all Routes from the map.</p>
+
+<hr size="5">
+<a name="oziSaveRTEflag"></a>
+<p><font color="#ff0000"><big><strong>Toggle routes saved flag</strong></big></font></p>
+
+<p><strong>function oziSaveRTEflag(Flag:boolean):integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4j or later</p>
+
+<p>If Flag is true then the routes loaded into OziExplorer are assumed to be 
+saved and the user will not be prompted to save it when a new route file is 
+loaded or OziExplorer is closed.</p>
+
+<hr size="5">
+<a name="oziLoadRTEfile"></a>
+<p><font color="#ff0000"><big><strong>Load route file</strong></big></font></p>
+
+<p><strong>function oziLoadRTEfile(var FileName:pansichar):integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4j or later</p>
+
+<p>Loads a route file.</p>
+
+<p>Specify the full path and name of the file.</p>
+
+<hr size="5">
+<a name="pntcmds"></a>
+<p><font color="#0000ff"><strong><big>Point Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziSavePTflag"></a>
+<p><font color="#ff0000"><big><strong>Toggle points saved flag</strong></big></font></p>
+
+<p><strong>function oziSavePTflag(Flag:boolean):integer;stdcall;</strong></p>
+
+<p>If Flag is true then the points loaded into OziExplorer are assumed to be 
+saved and the user will not be prompted to save it when a new point file is 
+loaded or OziExplorer is closed.</p>
+
+<hr size="5">
+<a name="oziClearPTs"></a>
+<p><font color="#ff0000"><big><strong>Clear all points</strong></big></font></p>
+
+<p><strong>function oziClearPTs:integer;stdcall;</strong></p>
+
+<p>Will clear all Points from the map.</p>
+
+<hr size="5">
+<a name="oziLoadPTfile"></a>
+<p><font color="#ff0000"><big><strong>Load point file</strong></big></font></p>
+
+<p><strong>function oziLoadPTfile(PointSetNum:integer;var
+FileName:pansichar):integer;stdcall;</strong></p>
+
+<p>Loads a point file.</p>
+
+<p>Specify the point set number to load into (1 to 75).</p>
+
+<p>Specify the full path and name of the file.</p>
+
+<hr size="5">
+<a name="evtcmds"></a>
+<p><font color="#0000ff"><strong><big>Event Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziClearEVs"></a>
+<p><font color="#ff0000"><big><strong>Clear all events</strong></big></font></p>
+
+<p><strong>function oziClearEVs:integer;stdcall;</strong></p>
+
+<p>Will clear all Events from the map.</p>
+
+<hr size="5">
+<a name="trkcmds"></a>
+<p><font color="#0000ff"><strong><big>Track Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziClearAllTracks"></a>
+<p><font color="#ff0000"><big><strong>Clear all tracks</strong></big></font></p>
+
+<p><strong>function oziClearAllTracks:integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will clear all Tracks from the map.</p>
+
+<hr size="5">
+<a name="oziClearTrack"></a>
+<p><font color="#ff0000"><big><strong>Clear a track</strong></big></font></p>
+
+<p><strong>function oziClearTrack(TrackNum:integer):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will clear the specified Track Number from the map.</p>
+
+<hr size="5">
+<a name="oziShowAllTracks"></a>
+<p><font color="#ff0000"><big><strong>Show all tracks</strong></big></font></p>
+
+<p><strong>function oziShowAllTracks:integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will turn on the display of the tracks.</p>
+
+<hr size="5">
+<a name="oziHideAllTracks"></a>
+<p><font color="#ff0000"><big><strong>Hide all tracks</strong></big></font></p>
+
+<p><strong>function oziHideAllTracks:integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will turn off the display of the tracks.</p>
+
+<hr size="5">
+<a name="oziShowTrack"></a>
+<p><font color="#ff0000"><big><strong>Show a track</strong></big></font></p>
+
+<p><strong>function oziShowTrack(TrackNum:integer):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will turn on the display of the specified track.</p>
+
+<p>Note - track display must be turned on as well.</p>
+
+<p>Except for track 1, all tracks are initially turned off so the use of this 
+command is necessary if you are adding track points to a track.</p>
+
+<hr size="5">
+<a name="oziHideTrack"></a>
+<p><font color="#ff0000"><big><strong>Hide a track</strong></big></font></p>
+
+<p><strong>function oziHideTrack(TrackNum:integer):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Will turn off the display of the specified track.</p>
+
+<hr size="5">
+<a name="oziCreateTrackPoint"></a>
+<p><font color="#ff0000"><big><strong>Create track point</strong></big></font></p>
+
+<p><strong>function
+oziCreateTrackPoint(TrackNum,Code:integer;lat,lon,altitude:double;tpDate:double):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p><b>TrackNum</b> - the number of the track (1..75)<br>
+<b>Code</b> - 1 = new track section ; 0 = draw line from last point <br>
+<b>lat,lon</b> - the latitude and longitude in the WGS 84 datum <br>
+<b>altitude</b> - the altitude ; -777 = no altitude <br>
+<b>tpDate</b> - the date in the correct format (see the bottom of this document)</p>
+
+<p>Don't forget to turn on the individual track using <a href="#oziShowTrack">oziShowTrack</a>
+and display all tracks using <a href="#oziShowAllTracks">oziShowAllTracks</a>.</p>
+
+<hr size="5">
+<a name="oziSetTrackDescription"></a>
+<p><font color="#ff0000"><big><strong>Set track description</strong></big></font></p>
+
+<p><strong>function oziSetTrackDescription(TrackNum:integer;var
+TrackDescription:pansichar):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Specify the description for the track.</p>
+
+<hr size="5">
+<a name="oziSetTrackType"></a>
+<p><font color="#ff0000"><big><strong>Set track type</strong></big></font></p>
+
+<p><strong>function oziSetTrackType(TrackNum,TrackType:integer):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Specify the track type</p>
+
+<p>0 = line<br>
+1 = points only (no lines)<br>
+10 = closed polygon<br>
+20 = alarm zone</p>
+
+<hr size="5">
+<a name="oziSetTrackWidth"></a>
+<p><font color="#ff0000"><big><strong>Set track width</strong></big></font></p>
+
+<p><strong>function oziSetTrackWidth(TrackNum,TrackWidth:integer):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Set the track width in pixels.</p>
+
+<hr size="5">
+<a name="oziSetTrackColor"></a>
+<p><font color="#ff0000"><big><strong>Set track color</strong></big></font></p>
+
+<p><strong>function oziSetTrackColor(TrackNum,TrackColor:integer):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Specify the track number to set (1 to 75).</p>
+
+<p>Specify the track color as a RGB integer.</p>
+
+<hr size="5">
+<a name="oziLoadTrackFile"></a>
+<p><font color="#ff0000"><big><strong>Load track file</strong></big></font></p>
+
+<p><strong>function oziLoadTrackFile(TrackNum:integer;var
+FileName:pansichar):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Loads a track file.</p>
+
+<p>Specify the track number to load into (1 to 75).</p>
+
+<p>Specify the full path and name of the file.</p>
+
+<hr size="5">
+<a name="oziSaveTrackFile"></a>
+<p><font color="#ff0000"><big><strong>Save track file</strong></big></font></p>
+
+<p><strong>function oziSaveTrackFile(TrackNum:integer;var
+FileName:pansichar):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Save the specified track.</p>
+
+<hr size="5">
+<a name="oziSaveTrackFlag"></a>
+<p><font color="#ff0000"><big><strong>Toggle track saved flag</strong></big></font></p>
+
+<p><strong>function oziSaveTrackFlag(TrackNum:integer;Flag:boolean):integer;stdcall;</strong></p>
+
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>If Flag is true then the track loaded into OziExplorer is assumed to be saved 
+and the user will not be prompted to save it when a new track file is loaded or 
+OziExplorer is closed.</p>
+
+<hr size="5">
+<a name="mfcmds"></a>
+<p><font color="#0000ff"><strong><big>Map Feature Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziClearMFs"></a>
+<p><font color="#ff0000"><big><strong>Clear all map features</strong></big></font></p>
+
+<p><strong>function oziClearMFs:integer;stdcall;</strong></p>
+
+<p>Will clear all Map Features.</p>
+
+<p>If the map is saved after clearing the map features there will be no map features saved
+in the .map file.</p>
+
+<hr size="5">
+<a name="oziCreateMF"></a>
+<p><font color="#ff0000"><big><strong>Create map feature</strong></big></font></p>
+
+<p><strong>function oziCreateMF(var Name:pchar;lat,lon:double;var Description:pchar;var
+PictureName:pchar;var SymbolName:pchar;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CreateWp:integer; var WpName:pchar):integer;stdcall;</strong></p>
+
+<p>Creates a map feature at the specified position with the specified parameters.</p>
+
+<p>The return value is the internal OziExplorer number of the Map Feature 
+created. This number may need to be stored locally if the Map Feature is to be 
+manipulated later in your program.</p>
+
+<p><strong>Name</strong> - the name of the map feature<br>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)<br>
+<strong>Description</strong> - text string<br>
+<strong>PictureName</strong> - path and name to the image<br>
+<strong>SymbolName</strong> - name of the symbol (must be in the symbols folder)<br>
+<strong>CreateWp</strong> - 0 = no ; 1 = yes<br>
+<strong>WpName</strong> - text string (must be a valid name for the GPS)<br>
+</p>
+
+<hr size="5">
+<a name="oziDeleteMfByNumber"></a>
+<p><font color="#ff0000"><big><strong>Delete map feature by number</strong></big></font></p>
+
+<p><strong>function oziDeleteMfByNumber(mfNum:integer):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Delete the Map Feature.</p>
+
+<hr size="5">
+<a name="oziRepositionMF"></a>
+<p><font color="#ff0000"><big><strong>Reposition map feature</strong></big></font></p>
+
+<p><strong>function oziRepositionMF(Number:integer;lat,lon:double):integer;stdcall;</strong></p>
+
+<p>The map feature pointed to by the specified&nbsp; number is repositioned to 
+the specified position. </p>
+
+<p>The map feature number is returned when a new map feature is created via the 
+API.</p>
+
+<hr size="5">
+<a name="mccmds"></a>
+<p><font color="#0000ff"><strong><big>Map Comment Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziClearMCs"></a>
+<p><font color="#ff0000"><big><strong>Clear all map comments</strong></big></font></p>
+
+<p><strong>function oziClearMCs:integer;stdcall;</strong></p>
+
+<p>Will clear all Map Comments from the map</p>
+
+<p>If the map is saved after clearing the map comments there will be no map comments saved
+in the .map file.</p>
+
+<hr size="5">
+<a name="oziCreateMC"></a>
+<p><font color="#ff0000"><big><strong>Create map comment</strong></big></font></p>
+
+<p><strong>function oziCreateMC(var Name:pchar;lat,lon:double; ForeColor, BackColor,
+Width, Height,FontSize, FontStyle:integer):integer;stdcall;</strong></p>
+
+<p>Creates a map comment at the specified position with the specified parameters.</p>
+
+<p>The return value is the internal OziExplorer number of the Map Comment 
+created. This number may need to be stored locally if the Map Comment is to be 
+manipulated later in your program.</p>
+
+<p>For most paramteres a value of -1 can be specified, this means use the OziExplorer
+default, <br>
+The ** indicates that the above option applies for the field.</p>
+
+<p><strong>Name</strong> - the name of the map comment<br>
+<strong>lat,lon</strong> - the position in decimal degrees (WGS 84 datum)<br>
+<strong>ForeColor</strong> - RGB color ; **<br>
+<strong>BackColor</strong> - RGB color ; **<br>
+<strong>Width</strong> - any integer ; **<br>
+<strong>Height</strong> - any integer ; **<br>
+<strong>FontSize</strong> - in points ; **<br>
+<strong>FontStyle</strong> - 0 = normal ; 1 = bold ; **</p>
+
+<hr size="5">
+<a name="oziDeleteMcByNumber"></a>
+<p><font color="#ff0000"><big><strong>Delete map comment by number</strong></big></font></p>
+
+<p><strong>function oziDeleteMcByNumber(mcNum:integer):integer;stdcall;</strong></p>
+<p>Versions<br>
+API - 1.05 <br>
+OziExplorer - 3.95.2</p>
+
+<p>Delete the specified Map Comment.</p>
+
+<hr size="5">
+<a name="oziRepositionMC"></a>
+<p><font color="#ff0000"><big><strong>Reposition map comment</strong></big></font></p>
+
+<p><strong>function oziRepositionMC(Number:integer;lat,lon:double):integer;stdcall;</strong></p>
+
+<p>The map comment pointed to by the specified number is repositioned to the 
+specified position. </p>
+
+<p>The map comment number is returned when a new map feature is created via the 
+API.</p>
+
+<hr size="5">
+<a name="mmcmds"></a>
+<p><font color="#0000ff"><strong><big>Moving Map Commands</big></strong></font></p>
+
+<hr size="5">
+<a name="oziStartMMserial"></a>
+<p><font color="#ff0000"><big><strong>Start moving map(serial)</strong></big></font></p>
+
+<p><strong>function oziStartMMserial:integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4h2 or later</p>
+
+<p>Starts Moving Map in OziExplorer, NMEA is expected on the serial port. This 
+is the same as starting Moving Map using OziExplorer's own menu command.</p>
+
+<hr size="5">
+<a name="oziStartMMapi"></a>
+<p><font color="#ff0000"><big><strong>Start moving map(api)</strong></big></font></p>
+
+<p><strong>function oziStartMMapi:integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4h2 or later</p>
+
+<p>Starts Moving Map in OziExplorer but NMEA is expected to be sent by the API 
+dll using the <a href="#oziSendMMstring">oziSendMMstring</a> command.</p>
+
+<hr size="5">
+<a name="oziSendMMstring"></a>
+<p><font color="#ff0000"><big><strong>Send NMEA strings</strong></big></font></p>
+
+<p><strong>function oziSendMMstring(var NmeaString:pchar):integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4h2 or later</p>
+
+<p>Send NMEA strings to OziExplorer. The strings must be one or more of the 
+supported types of NMEA strings. ($GPRMC, $GPGGA, $GPGLL, $ GPVTG).</p>
+
+<p>To use this command Moving map in OziExplorer must be started using the 
+<a href="#oziStartMMapi">oziStartMMapi</a> command above.</p>
+
+<hr size="5">
+<a name="oziStopMM"></a>
+<p><font color="#ff0000"><big><strong>Stop moving map</strong></big></font></p>
+
+<p><strong>function oziStopMM:integer;stdcall;</strong></p>
+
+<p>Requires OziExplorer version 3.90.4h2 or later</p>
+
+<p>Turns OFF Moving Map.</p>
+
+<hr size="5">
+<a name="oziSendMMpositionON"></a>
+<p><font color="#ff0000"><big><strong>Enable procedure for moving map data</strong></big></font></p>
+
+<p><strong>function oziSendMMpositionON(p:TMMpositionCallback):integer;stdcall;</strong></p>
+
+<p>When turned ON OziExplorer will return the <strong>moving map data</strong> by
+OziExplorer calling the procedure which has its address specified in the p variable. This
+must be a procedure defined as below.</p>
+
+<p>The Callback Procedure</p>
+
+<p>TMMpositionCallback = procedure(lat,lon,speed,course,magvar,altitude:double);stdcall;</p>
+
+<p><strong>procedure
+MMpositionCallback(Lat,Lon,speed,heading,magvar,altitude:double);stdcall;</strong> 
+
+</p><ul>
+  <li>Lat, Lon - the Lat/Lon position</li>
+  <li>speed in kph</li>
+  <li>heading in degrees true</li>
+  <li>magvar in degrees</li>
+  <li>altitude in meters</li>
+</ul>
+
+<hr size="5">
+<a name="oziSendMMpositionOFF"></a>
+<p><font color="#ff0000"><big><strong>Disable moving map data intercept</strong></big></font></p>
+
+<p><strong>function oziSendMMpositionOFF:integer;stdcall;</strong></p>
+
+<p>Turns off the sending of moving map data</p>
+
+<hr size="5">
+<a name="oziGps2NavWp"></a>
+<p><font color="#ff0000"><big><strong>Get navigation data</strong></big></font></p>
+
+<p><strong>function oziGps2NavWp(var sname:pansichar;var description:pansichar;var
+distance:double;var bearing:double):integer;stdcall;</strong></p>
+
+<p>From the current GPS position return the name, description, distance and bearing to the
+waypoint being navigated to. 
+
+</p><ul>
+  <li>sname - name of the waypoint</li>
+  <li>description - the description stored with the waypoint</li>
+  <li>distance in meters</li>
+  <li>bearing&nbsp; in degrees</li>
+</ul>
+
+<hr size="5">
+<a name="oedcmds"></a>
+<p><font color="#0000ff"><big><strong>Oedometer Commands</strong></big></font></p>
+
+<p><strong>OziExplorer has 2 Oedometers available which can be manipulated by the API</strong></p>
+
+<hr size="5">
+<a name="oziOedometer1ON"></a>
+<p><font color="#ff0000"><big><strong>Enable oedometer 1</strong></big></font></p>
+
+<p><strong>function oziOedometer1ON(p:TOedometer1Callback):integer;stdcall;</strong></p>
+
+<p>Turn oedometer 1 on</p>
+
+<p>The Oedometer will be turned on and the distance will be returned by OziExplorer
+calling the procedure which has its address specified in the p variable. This must be a
+procedure defined as below.</p>
+
+<p>TOedometer1Callback = procedure (d:double);stdcall; </p>
+
+<p><strong>procedure Oedometer1Callback(d:double);stdcall;</strong> 
+
+</p><ul>
+  <li>d - the Oedometer distance in meters</li>
+</ul>
+
+<hr size="5">
+<a name="oziOedometer1OFF"></a>
+<p><font color="#ff0000"><big><strong>Disable oedometer 1</strong></big></font></p>
+
+<p><strong>function oziOedometer1OFF:integer;stdcall;</strong></p>
+
+<p>Turn oedometer 1 off</p>
+
+<hr size="5">
+<a name="oziOedometer1Reset"></a>
+<p><font color="#ff0000"><big><strong>Reset oedometer 1</strong></big></font></p>
+
+<p><strong>function oziOedometer1Reset:integer;stdcall;</strong></p>
+
+<p>Reset oedometer 1 to zero</p>
+
+<hr size="5">
+<a name="oziOedometer1Set"></a>
+<p><font color="#ff0000"><big><strong>Set oedometer 1</strong></big></font></p>
+
+<p><strong>function oziOedometer1Set(d:double):integer;stdcall;</strong></p>
+
+<p>Set oedometer 1 to a specific value</p>
+
+<hr size="5">
+<a name="oziOedometer1UP"></a>
+<p><font color="#ff0000"><big><strong>Oedometer 1 increments</strong></big></font></p>
+
+<p><strong>function oziOedometer1UP:integer;stdcall;</strong></p>
+
+<p>Oedometer 1 counts up</p>
+
+<hr size="5">
+<a name="oziOedometer1DOWN"></a>
+<p><font color="#ff0000"><big><strong>Oedometer 1 decrements</strong></big></font></p>
+
+<p><strong>function oziOedometer1DOWN:integer;stdcall;</strong></p>
+
+<p>Oedometer 1 counts down</p>
+
+<hr size="5">
+
+<a name="Oedometer2"></a>
+<p><font color="#ff0000"><big><strong>Oedometer 2</strong></big></font></p>
+<p><strong>Oedometer 2 Commands are the same as above but operate on Oedometer 2</strong></p>
+
+<p><strong>function oziOedometer2ON(p:TOedometer2Callback):integer;stdcall;<br>
+function oziOedometer2OFF:integer;stdcall;<br>
+function oziOedometer2Reset:integer;stdcall;<br>
+function oziOedometer2Set(d:double):integer;stdcall;<br>
+function oziOedometer2UP:integer;stdcall;<br>
+function oziOedometer2DOWN:integer;stdcall;<br>
+</strong></p>
+
+<hr size="5">
+<a name="calling"></a>
+<p><font color="#0000ff"><strong><big>API calling conventions</big></strong></font></p>
+
+<hr size="5">
+<a name="datefmt"></a>
+<p><font color="#ff0000"><big><strong>Date Format</strong></big></font></p>
+
+<p>Delphi stores date and time values in the TDateTime type. The integral part of a
+TDateTime value is the number of days that have passed since 12/30/1899. The fractional
+part of a TDateTime value is the time of day. </p>
+
+<p>Following are some examples of TDateTime values and their corresponding dates and
+times: </p>
+
+<p>0 - 12/30/1899 12:00 am<br>
+2.75 - 1/1/1900 6:00 pm<br>
+-1.25 - 12/29/1899 6:00 am<br>
+35065 - 1/1/1996 12:00 am </p>
+
+<hr size="5">
+<a name="pansichar"></a>
+<p><font color="#ff0000"><big><strong>pansichar data type</strong></big></font></p>
+
+<p><strong>pansichar</strong> is a pointer to the first character of an ANSI
+string.  The string must be a null-terminated (C-like) string.  The characters
+in the string are single characters, 8 bits in size.</p>
+
+<hr size="5">
+<a name="pchar"></a>
+<p><font color="#ff0000"><big><strong>pchar data type</strong></big></font></p>
+
+<p><strong>pchar</strong> is a pointer to the first character of a character
+string.  The string must be a null-terminated (C-like) string.  The characters
+in the string are not guaranteed to be 1 byte in size.</p>
+
+<hr size="5">
+<a name="integer"></a>
+<p><font color="#ff0000"><big><strong>integer data type</strong></big></font></p>
+
+<p><strong>integer</strong> is an integer value, 1 bit sign, and 31 bits for
+the value.</p>
+
+<hr size="5">
+<a name="double"></a>
+<p><font color="#ff0000"><big><strong>double data type</strong></big></font></p>
+
+<p><strong>double</strong> is the general purpose floating point type in Delphi.
+It strikes the balance between capacity/precision versus storage/performance.
+It supports approximately 15 digits of precision in a range from 2.23 x 10*-308
+to 1.79 x 10*308.</p>
+
+<hr size="5">
+<a name="boolean"></a>
+<p><font color="#ff0000"><big><strong>boolean data type</strong></big></font></p>
+
+<p><strong>boolean</strong> provides an enumeration of the logical True and
+False values.</p>
+
+</body></html>
