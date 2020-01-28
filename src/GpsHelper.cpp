@@ -22,9 +22,7 @@ bool needFixTime = true;
 Coordinates coordinates;
 
 void GpsHelper_setup() {
-  if (isLisa() == false) {
-    return;
-  }
+  
 
   if (isAxpEnabled()) {
     GPS_RX = 12;
@@ -34,7 +32,18 @@ void GpsHelper_setup() {
     GPS_TX = 12;
   }
 
-  coordinates = {};
+  //coordinates = {};
+  coordinates = {
+    false,
+    0,
+    0,
+    {0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0}
+  };
+
+  if (isLisa() == false) {
+    return;
+  }
 
   SerialGPS.begin(9600, SERIAL_8N1, GPS_TX, GPS_RX);   //12, 15, //34-TX 12-RX
 }
@@ -98,13 +107,13 @@ void smartDelay(unsigned long ms) {
     coordinates.isValid = gps.location.isValid() && gps.date.isValid() && gps.time.isValid();
     
     String isValidStr = (coordinates.isValid ? "true" : "false");
-    debugLog("");
-    debugLog("isValid: " + isValidStr);
+    //debugLog("");
+    //debugLog("isValid: " + isValidStr);
     
-    debugLog("lat: "+String(coordinates.lat,8)+", lng: "+String(coordinates.lng,8));
-    debugLog("date: "+String(coordinates.date));
-    debugLog("time: "+String(coordinates.time));
-    debugLog("");
+    //debugLog("lat: "+String(coordinates.lat,8)+", lng: "+String(coordinates.lng,8));
+    //debugLog("date: "+String(coordinates.date));
+    //debugLog("time: "+String(coordinates.time));
+    //debugLog("");
   }  
 }
 

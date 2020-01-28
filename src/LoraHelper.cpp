@@ -27,6 +27,8 @@ unsigned long counter = 0;
 
 Coordinates lastCoordinates = {};
 
+bool STOP_RECEIVER = false;
+
 void cbk(int packetSize);
 bool itsTimeToSend();
 
@@ -36,12 +38,15 @@ void LoraHelper_setup(void) {
     if (!LoRa.begin(BAND)) {
         debugLog("Starting LoRa ...");
         while (1);
+    } else {
+      debugLog("LoRa Started");
     }
-    LoRa.onReceive(cbk);
+    //LoRa.receive();
+    //LoRa.onReceive(cbk);
     LoRa.setSpreadingFactor(12);
     LoRa.crc();
-    LoRa.receive();
     LoRa.setOCP(150);
+    LoRa.setTxPower(17);
 
     counter = 0;
 }
@@ -54,7 +59,7 @@ bool itsTimeToSend() {
   uint8_t sec = second(t); 
 
   if (sec%5 == 0) {
-    debugLog("sec time: "+String(sec));
+    //debugLog("sec time: "+String(sec));
   }
 
   //TODO переделать на учет 2х минут, с четными/нечетными минутами, и распределить 120 секунд на 2 минуты
@@ -67,24 +72,32 @@ bool itsTimeToSend() {
   return result;
 }
 
+
+/*
+Создание и отправка пакета, нужно переделать на отправку из очереди
+*/
 void LoraHelper_send_loop() {
 
   if (!itsTimeToSend()) {
     return;
   }
   debugLog("LoraHelper_send_loop itsTimeToSend");
+  STOP_RECEIVER = true;
 
 
   Coordinates currentCoordinates = getCoordinates(); 
-  /*if (
-    (currentCoordinates.isValid) && (
+  //Serial.println("currentCoordinates received");
+    /*
+    if ((currentCoordinates.isValid) && (
       (currentCoordinates.lat != lastCoordinates.lat) ||
       (currentCoordinates.lng != lastCoordinates.lng) ||
       (currentCoordinates.date != lastCoordinates.date) ||
       (currentCoordinates.time != lastCoordinates.time) 
-  )) {*/
+      )
+    */
   if (1 == 1) {
     // prepare send data
+
     String serialNumber = getSerialNumber();
     for (int i=0; i<6; i++) {
       struct_data.serialNumber[i] = serialNumber.charAt(i);
@@ -106,58 +119,124 @@ void LoraHelper_send_loop() {
     //lng: 10.128002
 
     //Sending Side
+
     char b[sizeof(struct_data)];
     memcpy(b, &struct_data, sizeof(struct_data));
 
     PACKET tmp; //Re-make the struct
     memcpy(&tmp, b, sizeof(tmp));
 
-    debugLog(" ");
-    debugLog("----");
-    debugLog("size: "+String(sizeof(b)));
-    debugLog("tmp size: "+String(sizeof(tmp)));
-    debugLog("tmp packet.serialNumber: "+String(tmp.serialNumber));
-    debugLog("tmp packet.counter: "+String(tmp.counter));
-    debugLog("tmp packet.lat: "+String(currentCoordinates.lat,8));
-    debugLog("tmp packet.lng: "+String(currentCoordinates.lng,8));
-
-    debugLog("tmp packet.date: "+String(tmp.date));
-    debugLog("tmp packet.time: "+String(tmp.time));
-  
+    //debugLog(" ");
+    //debugLog("----");
+    //debugLog("size: "+String(sizeof(b)));
+    //debugLog("tmp size: "+String(sizeof(tmp)));
+    //debugLog("tmp packet.serialNumber: "+String(tmp.serialNumber));
+    //debugLog("tmp packet.counter: "+String(tmp.counter));
+    //debugLog("tmp packet.lat: "+String(currentCoordinates.lat,8));
+    //debugLog("tmp packet.lng: "+String(currentCoordinates.lng,8));
+    //debugLog("tmp packet.date: "+String(tmp.date));
+    //debugLog("tmp packet.time: "+String(tmp.time));
+    
+    //delay(100);
     // send packet
+
+    // Each packet can contain up to 255 bytes.
+
+    //1) добавить в очередь пакет, PushToQueueForLoraSend(msg);
+    //2) затем обработать по циклу все подряд
+    uint8_t msg[52];
+    debugLog("===> 1) ");
+    memcpy(&msg, b, sizeof(b));
+    debugLog("===> 2) ");
+    PushToQueueForLoraSend(msg);
+    debugLog("===> 3) ");
+
+    //work with send queue
+    //debugLog("QueueHelper_loop");
+    unsigned int i;
+    int count = 20 - qSendGetRemainingCount();
+    for (i = 0 ; i < count; i++) { //sizeof(tab)/sizeof(Rec) ; i++)
+      //debugLog("queue i: " + String(i, DEC));
+		  //Rec rec;
+      uint8_t msg[52];
+      for (int j = 0; j<52; j++) {
+        msg[j] = 0;
+      }
+      ResultMessage resultMessage = qSendPop();
+      int sum = 0;
+      for (int j = 0; j<52; j++) {
+        sum = sum + resultMessage.msg[j];
+      }
+      if (sum > 0) {
+        debugLog("-=-=-=-=-=-= will send packet ");
+        //need to send (resultMessage.msg);  
+      }
+      /*
+		  if (qSend.pop(msg) == false) {
+        return;
+      }
+      //debugLog("queue parse i: " + String(i, DEC));
+	    parseBuffer(msg);*/
+	  }
+    //end work with send queue
+
+
     LoRa.beginPacket();
+
     //LoRa.print("hello ");
     //LoRa.print(counter);
     LoRa.write((uint8_t*)&b, sizeof(b));
-    LoRa.endPacket();
+    int success = LoRa.endPacket(true); //async, true enables non-blocking mode, false waits for transmission to be completed (default)
+    
+    debugLog("LORA success: "+String(success));
 
     int len = (counter > 999) ? 5 : 6;
-    setTxLine(String(counter)+" "+String((currentCoordinates.lat),len)+" "+String((currentCoordinates.lng),len));
-    DisplayHelper_draw();
     
+    setTxLine(String(counter)+" "+String((currentCoordinates.lat),len)+" "+String((currentCoordinates.lng),len));
+    //БУДЕТ ГЛЮК ЕСЛИ ЗДЕСЬ СДЕЛАТЬ ВЫЗОВ DisplayHelper_draw
+    DisplayHelper_draw();
+
     lastCoordinates = currentCoordinates;
+    
+    delay(1000);
+    
   }
+  STOP_RECEIVER = false;
+  //debugLog("LoraHelper_send_loop end");
+  
 }
 
 void LoraHelper_receive_loop() {
-  LoRa.receive();
-  /*
 
-  int packetSize = LoRa.parsePacket();
-  if (packetSize>0) {
-    debugLog("");
-    debugLog(String(packetSize));
-    debugLog("");
+  if (STOP_RECEIVER == true) {
+    return;
   } else {
-    //Serial.print(String(packetSize));
+    //Serial.print(".");
+    //LoRa.receive();
+
+    /*int availableBytes = LoRa.available();
+    if (availableBytes > 0) {
+      debugLog(">>>>> availableBytes: "+String(availableBytes));
+    }*/
+    int packetSize = LoRa.parsePacket();
+    if (packetSize>0) {
+      debugLog("");
+      debugLog(">>>>>");
+      debugLog(String(packetSize));
+      debugLog("");
+      cbk(packetSize);
+    } else {
+      //Serial.print(String(packetSize));
+    }
+    //if (packetSize>0) { cbk(packetSize);  }
   }
-  if (packetSize>0) { cbk(packetSize);  }*/
 }
 
 void cbk(int packetSize) {
-  if (isLisa()) {
-    return;
-  }
+  //debugLog("-=-=-=-=-=-=-=-= cbk =-=-=-=-=-=-=-=-=-");
+  //if (isLisa()) {
+  //  return;
+  //}
 
   if (packetSize <1 ) {
     return;
@@ -185,8 +264,12 @@ void cbk(int packetSize) {
   //debugLog("");
 
   //debugLog("PushToQueue");
+  //debugLog("-=-=-=-=-=-=-=-= end cbk =-=-=-=-=-=-=-=-=-");
 
   PushToQueue(msg);
+    
+  //debugLog("-=-=-=-=-=-=-=-= end push to queue =-=-=-=-=-=-=-=-=-");
+
   return;
 /*
 

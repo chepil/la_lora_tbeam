@@ -4,16 +4,24 @@
 #include "main.h"
 #include "AxpHelper.h"
 
+#include <vector>
+
 String showSerialNumber = "";
 String id8SerialNumber = "";
 
 bool down = false;
+
+void printDebugLog();
+
+std::vector<String> arrayOfDebugLog;
 
 String getSerialNumber() {
     return showSerialNumber;
 }
 
 void SetupSerialNumber() {
+
+  arrayOfDebugLog.push_back("SetupSerialNumber"); 
   //UniqueIDdump(Serial);
   UniqueID8dump(Serial);
   for (size_t i = 0; i<8; i++) {
@@ -37,6 +45,8 @@ void SetupSerialNumber() {
   debugLog("screen Serial number: "+showSerialNumber);
 
   setSerialNumber(showSerialNumber);
+
+
 }
 
 void Shutdown() {
@@ -63,7 +73,19 @@ bool getDown() {
 }
 
 void debugLog(String message) {
-  if (Serial.availableForWrite()) {
-    Serial.println(message);
-  }
+  arrayOfDebugLog.push_back(message); 
+  printDebugLog();
+}
+
+void printDebugLog() {
+  while (!arrayOfDebugLog.empty()) { 
+    String message = arrayOfDebugLog[0];
+    int sm = sizeof(message);
+    int len = Serial.availableForWrite();
+    if (len >= sm) {
+      arrayOfDebugLog.pop_back();
+      Serial.println(message);
+      delay(100);
+    }
+  } 
 }

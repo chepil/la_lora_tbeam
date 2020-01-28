@@ -20,6 +20,7 @@ void updateTime();
 bool needUpdate = true;
 
 void SetupWiFi() {
+    //WiFi.mode(WIFI_STA);
     WiFi.begin("lora", "o7t4r14RIUj");
 
     int maxwait = 5;
@@ -76,13 +77,13 @@ void updateTime() {
     */
 
    time_t t = now();
-   it (t > 1574612710) {
+   if (t > 1574612710) {
        needUpdate = false;
    }
 
     unsigned long rawTime = timeClient.getEpochTime();
     if (rawTime > 1574612710) {
-        //debugLog("set time with rawTime: "+String(rawTime));
+        debugLog("set time with rawTime: "+String(rawTime));
         setTime(rawTime);
         DisplayHelper_draw();
         needUpdate = false;
